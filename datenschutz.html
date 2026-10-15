@@ -1,112 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Privacy Policy</title>
-<style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PLPP3HZ8LC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-PLPP3HZ8LC');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy - Datenschutz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #111827;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #1e293b;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --radius: 12px;
+    }
+
     body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
       max-width: 800px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-      font-family: sans-serif;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
       line-height: 1.6;
     }
+
+    .container {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
     h1, h2 {
-      color: #333;
+      font-family: 'Archivo', sans-serif;
+      color: var(--text);
     }
+
+    h1 {
+      font-size: 2rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    p, ul {
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    strong {
+      color: var(--text);
+    }
+
     a {
-      color: #0066cc;
+      color: var(--primary);
+      text-decoration: none;
     }
-</style>
+
+    a:hover {
+      text-decoration: underline;
+      color: var(--primary-hover);
+    }
+  </style>
 </head>
 <body>
-<h1>Privacy Policy</h1>
- 
-  <p>We are committed to protecting your privacy. This Privacy Policy describes how your personal data is collected, used, and shared when you use our mobile application (hereafter referred to as “the App”).</p>
- 
-  <h2>1. Data Controller</h2>
-<p>
-    F&S FreizeitApplications UG (haftungsbeschränkt)<br />
-    Simon Schätzlein<br />
-    Weinweg 27<br />
-    Faulbach (97906), Deutschland<br />
-    Email: <a href="mailto:freizeitapplications@gmail.com">freizeitapplications@gmail.com</a>
-</p>
- 
-  <h2>2. Information We Collect</h2>
-<ul>
-<li><strong>Authentication Data:</strong> When you sign in (via email or anonymously), we collect identifiers such as your email address or Firebase UID via Firebase Authentication.</li>
-<li><strong>User Content:</strong> We store data you create in the app (e.g. plants, notes) in Firestore (cloud database) and locally via SQLite for offline use.</li>
-<li><strong>Technical Data:</strong> We may collect information about your device, OS version, language preferences, and usage patterns for analytics and debugging purposes.</li>
-</ul>
- 
-  <h2>3. Use of Your Information</h2>
-<p>We use your personal data to:</p>
-<ul>
-<li>Provide and maintain the app</li>
-<li>Authenticate and authorize users</li>
-<li>Store and sync your data securely</li>
-<li>Improve performance and fix bugs</li>
-</ul>
- 
-  <p>Processing is based on your consent (Art. 6(1)(a) GDPR), our legitimate interest (Art. 6(1)(f) GDPR), or as necessary to fulfill our contract with you (Art. 6(1)(b) GDPR).</p>
- 
-  <h2>4. Local Storage</h2>
-<p>The App stores certain data locally on your device using SQLite for offline availability. This data remains on your device unless explicitly synced with Firestore.</p>
- 
-  <h2>5. Data Sharing</h2>
-<p>We do not sell or rent your personal data. However, we use trusted service providers who may process data on our behalf, such as:</p>
-<ul>
-<li><a href="https://firebase.google.com/support/privacy" target="_blank">Firebase by Google</a> (Authentication, Firestore)</li>
-</ul>
- 
-  <h2>6. Data Retention</h2>
-<p>We retain personal data only as long as necessary to fulfill the purposes for which it was collected. You may request deletion at any time by contacting us.</p>
- 
-  <h2>7. International Transfers</h2>
-<p>We operate globally. Your data may be transferred and stored outside your country, including in the EU or the United States. We ensure appropriate safeguards are in place.</p>
- 
-  <h2>8. Your Rights (GDPR)</h2>
-<p>Under the General Data Protection Regulation (GDPR), users in the EU/EEA have the following rights:</p>
-<ul>
-<li>Access your data</li>
-<li>Correct inaccurate data</li>
-<li>Delete your data</li>
-<li>Restrict or object to processing</li>
-<li>Data portability</li>
-<li>Withdraw consent at any time</li>
-<li>Lodge a complaint with a supervisory authority</li>
-</ul>
- 
-  <h2>9. Data Security</h2>
-<p>We implement reasonable technical and organizational measures to protect your data from loss, misuse, unauthorized access, disclosure, alteration, or destruction.</p>
- 
-  <h2>10. Children’s Privacy</h2>
-<p>We do not knowingly collect or solicit personal data from children under 13 (or under 16 where required by law). If we learn that we have collected such data, we will delete it promptly.</p>
- 
-  <h2>11. California Privacy Rights (CCPA/CPRA)</h2>
-<p>If you are a California resident, you have specific rights under the California Consumer Privacy Act (CCPA) and the California Privacy Rights Act (CPRA), including:</p>
-<ul>
-<li><strong>Right to Know:</strong> Learn what personal data we collect and how we use it</li>
-<li><strong>Right to Delete:</strong> Request deletion of your personal data</li>
-<li><strong>Right to Correct:</strong> Request correction of inaccurate data</li>
-<li><strong>Right to Opt-Out:</strong> Opt-out of the sale or sharing of your personal information (we do not sell data)</li>
-<li><strong>Right to Limit Use:</strong> Limit use of sensitive personal information (if applicable)</li>
-<li><strong>Right to Non-Discrimination:</strong> You won’t be treated differently for exercising your rights</li>
-</ul>
-<p>You can exercise these rights by contacting us at <a href="mailto:freizeitapplications@gmail.com">freizeitapplications@gmail.com</a>.</p>
- 
-  <h2>12. Sale of Personal Data</h2>
-<p>We do <strong>not</strong> sell or share your personal data with third parties for monetary or other valuable consideration.</p>
- 
-  <h2>13. Changes to This Policy</h2>
-<p>We may update this Privacy Policy from time to time. The latest version will always be available in the app or at our official website. Changes take effect upon posting.</p>
- 
-  <h2>14. Contact Us</h2>
-<p>If you have questions about this Privacy Policy or your data, please contact us:</p>
-<p>
-    Email: <a href="mailto:freizeitapplications@gmail.com">freizeitapplications@gmail.com</a><br />
-</p>
+  <div class="container">
+    <h1>Privacy Policy</h1>
+   
+    <p>We are committed to protecting your privacy. This Privacy Policy describes how your personal data is collected, used, and shared when you use our mobile application (hereafter referred to as “the App”).</p>
+   
+    <h2>1. Data Controller</h2>
+    <p>
+      F&S FreizeitApplications UG (haftungsbeschränkt)<br />
+      Simon Schätzlein<br />
+      Weinweg 27<br />
+      Faulbach (97906), Deutschland<br />
+      Email: <a href="mailto:freizeitapplications@gmail.com">freizeitapplications@gmail.com</a>
+    </p>
+   
+    <h2>2. Information We Collect</h2>
+    <ul>
+      <li><strong>Authentication Data:</strong> When you sign in (via email or anonymously), we collect identifiers such as your email address or Firebase UID via Firebase Authentication.</li>
+      <li><strong>User Content:</strong> We store data you create in the app (e.g. plants, notes) in Firestore (cloud database) and locally via SQLite for offline use.</li>
+      <li><strong>Technical Data:</strong> We may collect information about your device, OS version, language preferences, and usage patterns for analytics and debugging purposes.</li>
+    </ul>
+   
+    <h2>3. Use of Your Information</h2>
+    <p>We use your personal data to:</p>
+    <ul>
+      <li>Provide and maintain the app</li>
+      <li>Authenticate and authorize users</li>
+      <li>Store and sync your data securely</li>
+      <li>Improve performance and fix bugs</li>
+    </ul>
+   
+    <p>Processing is based on your consent (Art. 6(1)(a) GDPR), our legitimate interest (Art. 6(1)(f) GDPR), or as necessary to fulfill our contract with you (Art. 6(1)(b) GDPR).</p>
+   
+    <h2>4. Local Storage</h2>
+    <p>The App stores certain data locally on your device using SQLite for offline availability. This data remains on your device unless explicitly synced with Firestore.</p>
+   
+    <h2>5. Data Sharing</h2>
+    <p>We do not sell or rent your personal data. However, we use trusted service providers who may process data on our behalf, such as:</p>
+    <ul>
+      <li><a href="https://firebase.google.com/support/privacy" target="_blank">Firebase by Google</a> (Authentication, Firestore)</li>
+    </ul>
+   
+    <h2>6. Data Retention</h2>
+    <p>We retain personal data only as long as necessary to fulfill the purposes for which it was collected. You may request deletion at any time by contacting us.</p>
+   
+    <h2>7. International Transfers</h2>
+    <p>We operate globally. Your data may be transferred and stored outside your country, including in the EU or the United States. We ensure appropriate safeguards are in place.</p>
+   
+    <h2>8. Your Rights (GDPR)</h2>
+    <p>Under the General Data Protection Regulation (GDPR), users in the EU/EEA have the following rights:</p>
+    <ul>
+      <li>Access your data</li>
+      <li>Correct inaccurate data</li>
+      <li>Delete your data</li>
+      <li>Restrict or object to processing</li>
+      <li>Data portability</li>
+      <li>Withdraw consent at any time</li>
+      <li>Lodge a complaint with a supervisory authority</li>
+    </ul>
+   
+    <h2>9. Data Security</h2>
+    <p>We implement reasonable technical and organizational measures to protect your data from loss, misuse, unauthorized access, disclosure, alteration, or destruction.</p>
+   
+    <h2>10. Children’s Privacy</h2>
+    <p>We do not knowingly collect or solicit personal data from children under 13 (or under 16 where required by law). If we learn that we have collected such data, we will delete it promptly.</p>
+   
+    <h2>11. California Privacy Rights (CCPA/CPRA)</h2>
+    <p>If you are a California resident, you have specific rights under the California Consumer Privacy Act (CCPA) and the California Privacy Rights Act (CPRA), including:</p>
+    <ul>
+      <li><strong>Right to Know:</strong> Learn what personal data we collect and how we use it</li>
+      <li><strong>Right to Delete:</strong> Request deletion of your personal data</li>
+      <li><strong>Right to Correct:</strong> Request correction of inaccurate data</li>
+      <li><strong>Right to Opt-Out:</strong> Opt-out of the sale or sharing of your personal information (we do not sell data)</li>
+      <li><strong>Right to Limit Use:</strong> Limit use of sensitive personal information (if applicable)</li>
+      <li><strong>Right to Non-Discrimination:</strong> You won’t be treated differently for exercising your rights</li>
+    </ul>
+    <p>You can exercise these rights by contacting us at <a href="mailto:freizeitapplications@gmail.com">freizeitapplications@gmail.com</a>.</p>
+   
+    <h2>12. Sale of Personal Data</h2>
+    <p>We do <strong>not</strong> sell or share your personal data with third parties for monetary or other valuable consideration.</p>
+   
+    <h2>13. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. The latest version will always be available in the app or at our official website. Changes take effect upon posting.</p>
+   
+    <h2>14. Contact Us</h2>
+    <p>If you have questions about this Privacy Policy or your data, please contact us:</p>
+    <p>
+      Email: <a href="mailto:freizeitapplications@gmail.com">freizeitapplications@gmail.com</a><br />
+    </p>
+  </div>
 </body>
 </html>
