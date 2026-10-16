@@ -1,18 +1,9 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LSTMSGEW2E"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-LSTMSGEW2E');
-</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Auto-Finanz-Rechner</title>
+<title>Autokosten-Rechner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -498,11 +489,20 @@ h1{font-size:clamp(28px,4.4vw,40px);line-height:1.08}
 .panel-hd{display:flex;align-items:baseline;gap:10px;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
 .panel-hd h2{font-size:15px;letter-spacing:.005em}
 .panel-hd .note{font-size:12px;color:var(--ink-3)}
+.hd-titel{display:flex;align-items:center;gap:7px;min-width:0}
+.hd-titel .ibtn{margin-top:0}
 .panel-bd{padding:16px}
 
 /* ---------- fields ---------- */
-.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:14px 14px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));column-gap:14px;row-gap:0;margin-bottom:-14px}
 .f{display:flex;flex-direction:column;gap:3px;min-width:0}
+/* Jedes Feld belegt drei Zeilen des Rasters (Beschriftung · Eingabe · Fuß). Über subgrid teilen sich
+   alle Felder einer Reihe diese Zeilen — die Eingaben stehen bündig, auch wenn eine Beschriftung umbricht. */
+.fgrid > .f{grid-row:span 3;display:grid;grid-template-rows:subgrid;row-gap:0;align-content:start;padding-bottom:14px}
+.fgrid > .f > .flab{align-self:end;padding-bottom:3px}
+.fgrid > .f > :nth-child(2){align-self:start}
+.fgrid > :not(.f){margin-bottom:14px}
+.ffuss{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding-top:2px;min-width:0}
 .f > label{font-size:12px;color:var(--ink-2);font-weight:500;line-height:1.3}
 .flab{display:flex;align-items:flex-start;gap:5px}
 .flab label{font-size:12px;color:var(--ink-2);font-weight:500;line-height:1.3;flex:1;min-width:0}
@@ -546,7 +546,7 @@ input[type=text].vname{font-family:var(--disp);font-weight:600;font-size:15px}
 .iconbtn:hover{color:var(--ink);border-color:var(--ink-3)}
 .vbody{padding:14px}
 .seg{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
-.seg:first-child{border-top:0;margin-top:0;padding-top:0}
+.seg:first-child,.artwahl + .seg{border-top:0;margin-top:0;padding-top:0}
 .seg > summary{cursor:pointer;list-style:none;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;gap:7px;padding-bottom:10px}
 .seg > summary::-webkit-details-marker{display:none}
 .seg > summary::before{content:"▸";font-size:10px;transition:transform .15s}
@@ -554,8 +554,33 @@ input[type=text].vname{font-family:var(--disp);font-weight:600;font-size:15px}
 .seg > summary:hover{color:var(--accent)}
 .segbadge{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:0;text-transform:none;color:var(--ink-2);font-variant-numeric:tabular-nums}
 .fgrid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:560px){ .fgrid.g3{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .fgrid.g3 .flab{min-height:2.7em;align-items:flex-end} }
+@media (max-width:560px){ .fgrid.g3{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
+/* ---------- Reparaturen im 1. Jahr ---------- */
+.repbox{grid-column:1/-1;display:grid;grid-template-columns:minmax(170px,230px) minmax(0,1fr);gap:6px 20px;align-items:start;
+  padding:13px 15px 12px;border:1.5px solid var(--accent);border-radius:10px;background:var(--accent-wash)}
+.rp-tag{grid-column:1/-1;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-deep)}
+.repbox > .f .flab label{font-size:13px;font-weight:600;color:var(--ink)}
+.repbox > .f .ir{background:var(--surface);border-color:var(--accent)}
+.repbox > .f input{font-size:16px;font-weight:600}
+.rp-text{margin:0;font-size:12.5px;line-height:1.5;color:var(--ink-2);padding-top:20px}
+.rp-live{grid-column:1/-1;border-top:1px solid color-mix(in srgb, var(--accent) 35%, transparent);margin-top:6px;padding-top:9px;font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+.rp-live p{margin:4px 0 0}
+.rp-live p:first-child{margin-top:0}
+.rp-live b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.rp-klein{font-size:11.5px;color:var(--ink-3)}
+.rp-warn{color:var(--win)!important}
+.infobox{margin-top:12px;padding:10px 12px;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;background:var(--accent-wash);
+  font-size:12.5px;line-height:1.5;color:var(--ink-2);max-width:90ch}
+.infobox strong{color:var(--ink)}
+table.plan th.rep,table.plan td.rep{background:var(--accent-wash)}
+table.plan th.rep{color:var(--accent-deep);font-weight:600}
+table.plan td.rep{color:var(--ink)}
+table.plan td.rep.null{color:var(--line-2)}
+@media (max-width:560px){
+  .repbox{grid-template-columns:minmax(0,1fr);padding:12px}
+  .rp-text{padding-top:0}
+}
 .grossblock{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line-2)}
 .planwrap{margin:12px 0 4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.plan{border-collapse:collapse;width:100%;min-width:0;font-size:11.5px;margin-bottom:2px}
@@ -597,13 +622,15 @@ table.plan tr.ges td{border-top:1px solid var(--line-2);border-bottom:0;color:va
 .rb-km{grid-column:1/-1;font-size:12px;line-height:1.45;color:var(--ink-2);border-top:1px dashed var(--line-2);padding-top:7px;margin-top:2px}
 .ratebox[data-warn="1"] .rb-urteil{color:var(--win)}
 @media (max-width:560px){ .ratebox{grid-template-columns:minmax(0,1fr)} }
+.ratebox.kompakt{grid-template-columns:minmax(0,1fr)}
+.ratebox.kompakt .rb-weg{display:none}
 .warnline{font-family:var(--mono);font-size:11.5px;margin-top:8px;padding:6px 8px;border-radius:5px;background:var(--win-wash);color:var(--win)}
 .okline{font-family:var(--mono);font-size:11.5px;margin-top:8px;color:var(--ink-3)}
 
 /* ---------- ranking rail ---------- */
 .rail{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));
   max-height:calc(100vh - 32px - env(safe-area-inset-top,0px));overflow-y:auto;overscroll-behavior:contain}
-@media (max-width:1040px){ .rail{max-height:none;overflow:visible} }
+@media (max-width:1040px){ .rail{max-height:none;overflow:visible} .rail.ohne-erg{display:none} }
 .rank{display:flex;flex-direction:column;gap:10px}
 .rrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;align-items:start;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
 .rrow.win{border-color:var(--win);background:var(--win-wash)}
@@ -641,7 +668,7 @@ svg{display:block;width:100%;height:auto;overflow:visible}
 .tip b{font-family:var(--disp);font-size:12px;display:block;margin-bottom:5px;color:var(--ink)}
 .tip .tr{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--ink-2)}
 .tip .tr i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:5px}
-.chartbox{position:relative}
+.chartbox{position:relative;touch-action:pan-y}
 .etfgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
 @media (max-width:860px){ .etfgrid{grid-template-columns:minmax(0,1fr)} }
 #tbl-etf{min-width:0}
@@ -652,7 +679,8 @@ svg{display:block;width:100%;height:auto;overflow:visible}
   color:var(--ink-3);border:1px solid var(--line-2);border-radius:4px;padding:1px 5px;margin-left:5px;vertical-align:1px}
 #tbl-fin tr.wf td{background:repeating-linear-gradient(135deg,transparent,transparent 5px,var(--surface-2) 5px,var(--surface-2) 10px)}
 #tbl-fin tr.wf-aus td{color:var(--ink-3)}
-.finttl{font-family:var(--disp);font-size:16px;font-weight:600;margin:0 0 6px}
+.finttl{font-family:var(--disp);font-size:16px;font-weight:600;margin:0}
+.finkopf{margin:0 0 6px}
 #tbl-fin th:first-child,#tbl-fin td:first-child{white-space:normal;min-width:190px}
 
 /* ---------- table ---------- */
@@ -707,9 +735,7 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
 .schaltzeile{grid-column:1/-1;display:flex;align-items:center;gap:10px}
 .schaltzeile label{font-size:13px;font-weight:500;color:var(--ink);cursor:pointer}
 .pvblock{grid-column:1/-1;border-top:1px dashed var(--line-2);padding-top:12px}
-.pvblock > .flab{margin-bottom:10px}
-.pvblock .pvcheck{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;flex:none}
-.pvblock .pvcheck input{width:16px;height:16px;margin:0}
+.pvblock > .schaltzeile + .fgrid{margin-top:12px}
 .modus-hint{flex:1;min-width:260px;font-size:13px;color:var(--ink-2);margin:0;max-width:80ch;line-height:1.5}
 .festwert .ir{background:var(--surface-3);border-style:dashed}
 .festwert .fw{flex:1;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;padding:7px 8px;color:var(--ink-2)}
@@ -728,6 +754,23 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
 .artseg button:first-child{border-left:0}
 .artseg button[aria-pressed="true"]{background:var(--accent);color:#fff}
 .artseg button:not([aria-pressed="true"]):hover{background:var(--surface-3);color:var(--ink)}
+
+/* ---------- Fahrzeug hinzufügen ---------- */
+.neufzg{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-top:14px;
+  padding:14px 16px;border:1.5px dashed var(--line-2);border-radius:10px;background:var(--surface-2)}
+.neufzg h3{font-size:14px;color:var(--ink)}
+.neufzg p{margin:3px 0 0;font-size:12.5px;color:var(--ink-3);line-height:1.45;max-width:62ch}
+.nf-text{flex:1 1 260px;min-width:0}
+.nf-wahl{display:flex;flex-wrap:wrap;gap:8px}
+.nf-wahl .btn{font-weight:600;white-space:nowrap}
+.nf-wahl .btn span{font-weight:700;margin-right:2px}
+.neufzg.is-eins{border-color:var(--accent);background:var(--accent-wash)}
+.neufzg.is-leer{margin-top:0;padding:28px 22px;border:2px dashed var(--accent);background:var(--accent-wash);
+  flex-direction:column;align-items:flex-start;gap:16px}
+.neufzg.is-leer h3{font-size:20px}
+.neufzg.is-leer p{font-size:14px;color:var(--ink-2);margin-top:6px}
+.neufzg.is-leer .nf-text{flex:none}
+.neufzg.is-leer .nf-wahl .btn{font-size:15px;padding:12px 22px}
 
 /* ---------- Berechnen ---------- */
 .rechnen{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:22px;padding:16px;
@@ -755,9 +798,89 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
 .ergkopf{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:space-between}
 
 /* ---------- Fußzeile ---------- */
-.fuss{display:flex;justify-content:flex-end;gap:20px;flex-wrap:wrap;margin-top:40px;padding-top:16px;border-top:1px solid var(--line)}
-.fuss a{font-size:13px;color:var(--ink-2);text-decoration:none}
+.fuss{display:flex;justify-content:space-between;align-items:baseline;gap:12px 24px;flex-wrap:wrap;margin-top:40px;padding-top:16px;border-top:1px solid var(--line)}
+.fuss .kontakt{margin:0;font-size:13px;color:var(--ink-2);line-height:1.5}
+.fuss .kontakt a{color:var(--accent);text-decoration:none;font-weight:500;overflow-wrap:anywhere}
+.fuss .rechtl{display:flex;gap:20px;flex-wrap:wrap;margin-left:auto}
+.fuss .rechtl a{font-size:13px;color:var(--ink-2);text-decoration:none}
 .fuss a:hover,.fuss a:focus-visible{color:var(--accent);text-decoration:underline}
+
+/* ---------- Handy ---------- */
+@media (max-width:560px){
+  .wrap{padding-inline:12px}
+  header{padding-block:20px 16px;margin-bottom:16px}
+  .eyebrow{font-size:10px;letter-spacing:.1em}
+  .sub{font-size:14px;margin-top:8px}
+  .bw-hinweis{font-size:12.5px;padding:7px 10px}
+  .modusleiste{margin-top:14px;padding:12px 14px;gap:8px}
+  .ml-kopf{gap:10px}
+  .modusschalter{gap:10px}
+  .ms-lab{font-size:16px}
+  .modus-hint{min-width:0;flex-basis:100%;font-size:12.5px}
+  .szenbar{gap:6px;margin-top:12px;padding-top:10px}
+  .szensep{display:none}
+  .szenbar select{max-width:none;flex:1 1 140px}
+  .szenbar input[type=text]{max-width:none;flex:1 1 110px}
+  .panel-hd{flex-wrap:wrap;row-gap:2px;padding:12px}
+  .panel-bd{padding:12px}
+  .secttl{margin:24px 0 10px}
+  .vhead{padding:10px 12px;gap:10px}
+  .vbody{padding:12px}
+  .seg > summary{flex-wrap:wrap;row-gap:2px}
+  .segbadge{white-space:nowrap}
+
+  /* Felder zweispaltig statt untereinander — halbiert die Scrollstrecke */
+  .fgrid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px}
+  .f .unit{padding:0 6px;font-size:10.5px}
+  .ir .einheit button{padding:0 7px}
+  /* ab 16px zoomt iOS beim Antippen nicht mehr ins Feld */
+  .wrap input[type=text], .wrap select, .grossrow .ir input{font-size:16px!important}
+  .f input[type=text]{padding:7px 7px}
+  .artwahl{gap:8px 10px}
+  .artseg button{padding:8px 14px}
+
+  .neufzg{padding:12px}
+  .neufzg.is-leer{padding:20px 14px}
+  .neufzg.is-leer h3{font-size:18px}
+  .nf-wahl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+  .nf-wahl .btn{padding:10px 4px;text-align:center}
+  .neufzg.is-leer .nf-wahl .btn{padding:13px 4px}
+  .rechnen{padding:12px;margin-top:16px}
+  .rechnen .btn.gross{width:100%}
+  .rechnen .hint{min-width:0}
+
+  /* Wartungsplan: kurze Köpfe, schmale Ränder — passt ohne Wischen */
+  table.plan{font-size:11px}
+  table.plan th,table.plan td{padding:4px 3px}
+  table.plan thead th{white-space:normal;hyphens:manual;font-size:9.5px;letter-spacing:.02em;line-height:1.2;vertical-align:bottom}
+  table.plan th:first-child,table.plan td:first-child{width:auto;padding-left:2px}
+
+  /* Alle Zahlen: Beschriftung darf umbrechen, statt die halbe Breite zu belegen */
+  #tbl{min-width:0;font-size:12px}
+  #tbl th,#tbl td{padding:7px 5px}
+  #tbl thead th{white-space:normal;letter-spacing:.04em;vertical-align:bottom;line-height:1.25}
+  #tbl td:first-child{white-space:normal;font-family:var(--sans);font-size:12.5px;min-width:92px;max-width:42vw}
+
+  /* Sofort bezahlen oder finanzieren: je Fahrzeug ein Block statt fünf Spalten */
+  #tbl-fin{min-width:0}
+  #tbl-fin thead{display:none}
+  #tbl-fin tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;padding:11px 6px;border-bottom:1px solid var(--line)}
+  #tbl-fin td,#tbl-fin tr.wf td{display:block;border:0;padding:0;text-align:left;position:static;white-space:normal;background:none}
+  #tbl-fin td:first-child{grid-column:1/-1;min-width:0}
+  #tbl-fin td[colspan]{grid-column:1/-1}
+  #tbl-fin td[data-l]::before{content:attr(data-l);display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-bottom:1px}
+  #tbl-fin tr.wf{background:repeating-linear-gradient(135deg,transparent,transparent 5px,var(--surface-2) 5px,var(--surface-2) 10px)}
+
+  .ratebox{padding:10px 12px}
+  .rb-big{font-size:22px}
+  .ergkopf .btn{width:100%}
+  .method summary{padding:12px}
+  .method .panel-bd{font-size:13px}
+  .method .formula{font-size:11px}
+  .fuss{margin-top:28px}
+  .fuss .rechtl{margin-left:0}
+}
 
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -770,8 +893,8 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
   <div class="topbar">
     <div>
       <div class="eyebrow">Vollkostenvergleich · Verbrenner ⇄ Elektro</div>
-      <h1>Auto-Finanz-Rechner</h1>
-      <p class="sub">Bis zu acht Fahrzeuge über einen frei wählbaren Zeitraum gegenrechnen — inklusive Wertverlust, Finanzierung, Verschleiß und PV-Mischpreis beim Laden. Jedes Feld hat einen Standardwert, den ein Klick zurückholt.</p>
+      <h1>Autokosten-Rechner</h1>
+      <p class="sub" data-kurz="Fahrzeuge über ihre Gesamtkosten vergleichen — Verbrenner wie Elektro.">Bis zu acht Fahrzeuge über einen frei wählbaren Zeitraum gegenrechnen — inklusive Wertverlust, Finanzierung, Verschleiß und PV-Mischpreis beim Laden.</p>
       <p class="bw-hinweis"><span><strong>Gerechnet wird mit Barwerten:</strong> Zahlungen, die erst später anfallen, werden auf heute abgezinst. Nur so lassen sich Barkauf, Finanzierung und Leasing fair vergleichen.</span><span id="modus-info"></span></p>
     </div>
   </div>
@@ -831,13 +954,24 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
       <span class="note" id="vcount"></span>
     </div>
     <div id="vehicles"></div>
-    <div class="btnrow">
-      <button class="btn" id="add-v" type="button">+ Fahrzeug hinzufügen</button>
-      <button class="btn" id="reset-all" type="button">Alles auf Standard zurücksetzen</button>
-    </div>
+    <!-- Fahrzeug hinzufügen: groß, solange noch keins angelegt ist -->
+    <section class="neufzg" id="neufzg" aria-labelledby="nf-titel">
+      <div class="nf-text">
+        <h3 id="nf-titel">Fahrzeug hinzufügen</h3>
+        <p id="nf-sub"></p>
+      </div>
+      <div class="nf-wahl" role="group" aria-label="Neues Fahrzeug mit Antrieb">
+        <button class="btn" type="button" data-neu="benzin"><span aria-hidden="true">+</span> Benzin</button>
+        <button class="btn" type="button" data-neu="diesel"><span aria-hidden="true">+</span> Diesel</button>
+        <button class="btn" type="button" data-neu="elektro"><span aria-hidden="true">+</span> Elektro</button>
+      </div>
+    </section>
     <div class="rechnen">
       <button class="btn primary gross" type="button" data-berechnen id="berechnen-btn">Berechnen</button>
       <p class="hint" id="berechnen-hint">Alle Fahrzeuge eingetragen? Dann rechnet der Rechner sie durch und zeigt Rangfolge und Diagramme.</p>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="reset-all" type="button">Alles auf Standard zurücksetzen</button>
     </div>
   </div>
 
@@ -919,7 +1053,7 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
     <div class="panel-bd">
       <div class="legend" id="lg-stack"></div>
       <div class="chartbox" id="box-stack"><svg id="svg-stack" viewBox="0 0 640 340" role="img" aria-label="Aufteilung der Gesamtkosten nach Kostenblöcken"></svg></div>
-      <p class="hint">Negative Beträge — Restwerterlös und THG-Prämie — sind in ihrem Block bereits abgezogen. Ein Block mit Nettoerlös erscheint nicht im Balken.</p>
+      <p class="hint" data-kurz="Restwert und THG-Prämie sind bereits abgezogen.">Negative Beträge — Restwerterlös und THG-Prämie — sind in ihrem Block bereits abgezogen. Ein Block mit Nettoerlös erscheint nicht im Balken.</p>
     </div>
   </section>
 </div>
@@ -927,19 +1061,16 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
 <!-- Zeitverlauf der Kosten -->
 <section class="panel" style="margin-top:24px">
   <div class="panel-hd">
-    <h2>Wann das Geld abfließt</h2>
+    <div class="hd-titel"><h2>Wann das Geld abfließt</h2><span id="etf-info"></span></div>
     <span class="note" id="etf-note"></span>
   </div>
   <div class="panel-bd">
-    <p class="hint" style="margin-top:0;margin-bottom:14px;max-width:80ch">
-      Nicht nur wie viel ein Auto kostet, sondern wann. Jede geleistete Zahlung wird bis zum jeweiligen Jahr aufgezinst — was früh abfließt, wiegt schwerer. Der Knick am Ende ist der Restwert. Der senkrechte Abstand zwischen zwei Linien ist der Vorsprung des einen Fahrzeugs vor dem anderen, zu diesem Zeitpunkt.
-    </p>
     <div class="legend" id="lg-etf"></div>
     <div class="chartbox" id="box-etf"><svg id="svg-etf" viewBox="0 0 640 300" role="img" aria-label="Aufgezinste Gesamtkosten im Zeitverlauf"></svg></div>
 
     <div class="finblock">
-      <h3 class="finttl">Sofort bezahlen oder finanzieren?</h3>
-      <p class="hint" style="margin-top:0;max-width:80ch">
+      <div class="hd-titel finkopf"><h3 class="finttl">Sofort bezahlen oder finanzieren?</h3><span id="fin-info"></span></div>
+      <p class="hint" style="margin-top:0;max-width:80ch" data-kurz="Was dasselbe Auto bar bezahlt und finanziert kostet — unabhängig von der Rangfolge oben.">
         Hier geht es nicht darum, <em>welches</em> Auto günstiger ist — das steht im Ranking oben. Hier geht es darum, <em>wie</em> du dasselbe Auto bezahlst. Beide Fragen sind unabhängig voneinander: Du kannst das günstigere Auto wählen und es trotzdem finanzieren.
       </p>
       <div class="wfbar" id="wf-bar"></div>
@@ -967,8 +1098,12 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
 </details>
 
 <footer class="fuss">
-  <a href="datenschutz.html">Datenschutzerklärung</a>
-  <a href="impressum.html">Impressum</a>
+  <p class="kontakt">Verbesserungsvorschläge oder Fragen? Bitte per Mail an
+    <a href="mailto:freizeitapplications@gmail.com">freizeitapplications@gmail.com</a></p>
+  <nav class="rechtl" aria-label="Rechtliches">
+    <a href="datenschutz.html">Datenschutzerklärung</a>
+    <a href="impressum.html">Impressum</a>
+  </nav>
 </footer>
 </div>
 
@@ -1047,6 +1182,7 @@ function effV(v){
   V_EINFACH.forEach(k => { if(v[k] !== undefined) e[k] = v[k]; });
   e.aPV = 0; e.aHeim = 100; e.aAC = 0; e.aDC = 0;   // geladen wird nur mit Haushaltsstrom
   e.gross = [];                                      // Großreparaturen gibt es nur im Detailmodus
+  e.kurveWirkung = stdWertArt(e.art, "kurveWirkung"); // Wirkung der Kurve: Voreinstellung je Antrieb
   return e;
 }
 const istBesitz = v => DETAIL && !!v.besitzt;
@@ -1071,7 +1207,7 @@ const GFIELDS = {
     {k:"pHaus",      l:"Haushaltsstrom",     u:"€/kWh",s:0.01, dec:3, e:1},
     {k:"pAC",        l:"Öffentlich AC",      u:"€/kWh",s:0.01, dec:3},
     {k:"pDC",        l:"Schnellladen DC",    u:"€/kWh",s:0.01, dec:3},
-    // pv:1 = nur sichtbar, wenn „PV-Anlage vorhanden“ angehakt ist
+    // pv:1 = nur sichtbar, wenn „PV-Anlage vorhanden“ eingeschaltet ist
     {k:"pEinsp",     l:"Einspeisevergütung", u:"€/kWh",s:0.001,dec:3, pv:1},
     {k:"einspRest",  l:"Vergütung läuft noch", u:"Jahre", s:1, pv:1},
     {k:"pEinspNach", l:"Danach nur noch",    u:"€/kWh",s:0.005,dec:3, pv:1}
@@ -1099,15 +1235,29 @@ const VDEF = {
   versicherung:1000, steuer:200, service:500,
   reifenPreis:800, reifenKm:40000, reifenJahre:4, reifenModus:"km", hu:150, reparatur:500,
   repEsk:0,
-  baujahr:new Date().getFullYear(), kmStand:0, altersKurve:1,
+  baujahr:new Date().getFullYear(), kmStand:0, altersKurve:1, kurveWirkung:100,   // Wirkung der Kurve in % (E-Auto: 60)
   gross:[],
-  ladekarte:0, thg:0,
+  ladekarte:0, thg:150,
   garFzg:0, garFzgKm:0, garRest:0, garAntrieb:0, garAntriebKm:0, garAntriebRest:60, garBezug:"ez",
   fin:"bar",
   anzahlung:0, kzins:0, klaufzeit:48, ballon:0,
   rateModus:"zins", kRate:500, rkFreikm:15000, rkMehrCt:12, rkRueckgabe:0, rkRueck:0,
   lRate:400, lSonder:3000, lLaufzeit:36, lFreikm:15000, lMehrCt:12, lRueck:0
 };
+
+/* Standardwerte, die von der Kraftstoffart abhängen. Alles Übrige gilt für alle Arten. */
+function stdWertArt(art, k){
+  if(art === "elektro"){
+    const e = { verbrauch:17, steuer:0, garFzg:4, garAntrieb:8,                 // E-Auto: steuerfrei, 4 + 8 Jahre Garantie
+                kurveWirkung:Math.round(KURVE_EV*100),                           // Verschleißkurve gedämpft
+                aPV:G.pv ? 35 : 0, aHeim:G.pv ? 50 : 85, aAC:5, aDC:10 };       // Ladeanteile je nach PV-Anlage
+    if(e[k] !== undefined) return e[k];
+  }
+  if(art === "diesel" && k === "verbrauch") return 6.5;
+  return VDEF[k];
+}
+const stdWert = (v, k) => stdWertArt(v.art, k);
+const ART_FELDER = ["verbrauch","steuer","garFzg","garAntrieb","aPV","aHeim","aAC","aDC","kurveWirkung"];
 
 /* e:1 = auch im Modus Einfach sichtbar; alle anderen Felder nur im Modus Detailliert */
 const VF = {
@@ -1135,9 +1285,11 @@ const VF = {
     {k:"hu",         l:"HU/AU",                   u:"€",      s:10, e:1},
     {k:"reifenPreis",l:"Reifensatz",              u:"€",      s:50},
     {k:"reifen",     custom:"reifen"},
-    {k:"reparatur",  l:"Reparaturen Jahr 1",      u:"€/Jahr", s:50, e:1},
     {k:"baujahr",    l:"Erstzulassung",           u:"Jahr",   s:1, e:1},
-    {k:"kmStand",    l:"Kilometerstand bei Kauf", u:"km",     s:5000, e:1}
+    {k:"kmStand",    l:"Kilometerstand bei Kauf", lBesitz:"Kilometerstand heute", u:"km", s:5000, e:1,
+      tBesitz:"Der heutige Kilometerstand deines Fahrzeugs, so wie er auf dem Tacho steht. Zusammen mit der Erstzulassung bestimmt er, wie verschlissen das Auto in der Rechnung schon ist — und damit, wie stark die Reparaturen in den nächsten Jahren steigen."},
+    // Der wichtigste Schätzwert bekommt einen eigenen Kasten am Ende des Abschnitts
+    {k:"reparatur",  custom:"rep", l:"Reparaturen im 1. Jahr", u:"€/Jahr", s:50, e:1}
   ],
   /* Eine Finanzierung, zwei Richtungen: Rate aus dem Zins berechnen lassen
      oder die Rate aus dem Angebot eintragen und den Zins zurückrechnen.     */
@@ -1157,12 +1309,18 @@ const VF = {
       t:"Kilometergrenze der Fahrzeuggarantie als Gesamtstand, z. B. 80.000 km bei Tesla. 0 heißt: ohne km-Grenze. Es gilt, was zuerst eintritt.",
       tRest:"Wie viele Kilometer die Fahrzeuggarantie ab heute noch gilt. 0 heißt: ohne km-Grenze."},
     {k:"garRest",       l:"davon selbst tragen", u:"%",    s:5, t:"Was trotz Garantie an dir hängen bleibt. 0 % bedeutet: in diesen Jahren keine Reparaturrücklage."},
-    {k:"garAntrieb",    l:"Garantie Antrieb/Batterie", lRest:"Restgarantie Antrieb/Batterie", u:"Jahre", s:1,
-      t:"Meist länger als die Fahrzeuggarantie — bei E-Autos oft 8 Jahre auf Antriebsstrang und Batterie, ab Erstzulassung gerechnet.",
-      tRest:"Wie viele Jahre die Garantie auf Antrieb und Batterie ab heute noch läuft. Bei einer km-Grenze (z. B. 160.000 km) gilt, was zuerst erreicht ist: verbleibende km geteilt durch deine Fahrleistung."},
+    /* Beim E-Auto gehört die Batterie zur Antriebsgarantie — die Varianten mit „El“ gelten dort */
+    {k:"garAntrieb",    l:"Garantie Antrieb", lEl:"Garantie Antrieb/Batterie",
+      lRest:"Restgarantie Antrieb", lRestEl:"Restgarantie Antrieb/Batterie", u:"Jahre", s:1,
+      t:"Garantie auf den Antriebsstrang, also Motor und Getriebe, ab Erstzulassung gerechnet. Manche Hersteller geben darauf länger Garantie als aufs übrige Fahrzeug. Gibt es keine eigene Antriebsgarantie, bleibt das Feld auf 0.",
+      tEl:"Meist länger als die Fahrzeuggarantie — bei E-Autos oft 8 Jahre auf Antriebsstrang und Batterie, ab Erstzulassung gerechnet.",
+      tRest:"Wie viele Jahre die Garantie auf den Antrieb ab heute noch läuft. Bei einer km-Grenze gilt, was zuerst erreicht ist: verbleibende km geteilt durch deine Fahrleistung.",
+      tRestEl:"Wie viele Jahre die Garantie auf Antrieb und Batterie ab heute noch läuft. Bei einer km-Grenze (z. B. 160.000 km) gilt, was zuerst erreicht ist: verbleibende km geteilt durch deine Fahrleistung."},
     {k:"garAntriebKm",  l:"oder bis km-Stand", lRest:"oder noch km", u:"km", s:10000,
-      t:"Kilometergrenze der Akku- und Antriebsgarantie als Gesamtstand, meist 160.000 km. 0 heißt: ohne km-Grenze. Es gilt, was zuerst eintritt — bei einem Gebrauchten mit vielen Kilometern oft die km-Grenze.",
-      tRest:"Wie viele Kilometer die Akku- und Antriebsgarantie ab heute noch gilt. 0 heißt: ohne km-Grenze."},
+      t:"Kilometergrenze der Antriebsgarantie als Gesamtstand. 0 heißt: ohne km-Grenze. Es gilt, was zuerst eintritt.",
+      tEl:"Kilometergrenze der Akku- und Antriebsgarantie als Gesamtstand, meist 160.000 km. 0 heißt: ohne km-Grenze. Es gilt, was zuerst eintritt — bei einem Gebrauchten mit vielen Kilometern oft die km-Grenze.",
+      tRest:"Wie viele Kilometer die Antriebsgarantie ab heute noch gilt. 0 heißt: ohne km-Grenze.",
+      tRestEl:"Wie viele Kilometer die Akku- und Antriebsgarantie ab heute noch gilt. 0 heißt: ohne km-Grenze."},
     {k:"garAntriebRest",l:"davon selbst tragen", u:"%",    s:5, t:"Nach Ablauf der Fahrzeuggarantie deckt die Antriebsgarantie nur noch einen Teil ab — der Rest bleibt bei dir."}
   ],
   leasing:[
@@ -1199,20 +1357,22 @@ function mkVehicle(over){
   v.gross = (v.gross||[]).map(g => Object.assign({}, g));  // eigene Kopie je Fahrzeug
   return v;
 }
-function startFahrzeuge(){
-  return [
-    mkVehicle({ name:"Benziner 3,0 l R6", art:"benzin", kaufpreis:48000, restwertPct:45,
-                verbrauch:9.5, versicherung:1150, steuer:290, service:550,
-                reifenPreis:900, reifenKm:40000, reparatur:600, einmalig:300 }),
-    mkVehicle({ name:"Tesla Model 3 LR", art:"elektro", kaufpreis:48000, restwertPct:42,
-                verbrauch:16.5, ladeverlust:12, aPV:35, aHeim:50, aAC:5, aDC:10,
-                versicherung:1300, steuer:0, service:150,
-                reifenPreis:1000, reifenKm:35000, reparatur:400,
-                ladekarte:5, thg:100, einmalig:1500,
-                garFzg:4, garFzgKm:80000, garAntrieb:8, garAntriebKm:192000 })
-  ];
-}
+/* Beim ersten Besuch ist kein Fahrzeug angelegt — die Kachel „Fahrzeug hinzufügen“
+   steht dann groß unter der Überschrift.                                          */
+function startFahrzeuge(){ return []; }
 let vehicles = startFahrzeuge();
+
+const ART_NAME = {benzin:"Benziner", diesel:"Diesel", elektro:"Elektroauto"};
+function neuesFahrzeug(art){
+  if(vehicles.length >= MAX_FZG) return null;
+  const basis = ART_NAME[art] || "Fahrzeug";
+  let name = basis, n = 2;
+  while(vehicles.some(v => v.name === name)) name = basis + " " + (n++);
+  const v = mkVehicle({name});
+  setzeArt(v, art);
+  vehicles.push(v);
+  return v;
+}
 
 /* ============================================================
    Rechenkern
@@ -1268,7 +1428,7 @@ function effAlter(v, g, t){
 /* Wie stark die Reparaturen an der Fahrleistung hängen. Etwa die Hälfte ist Verschleiß
    durch Fahren (Bremsen, Fahrwerk, Kupplung, Lager, Auspuff), die andere Hälfte
    Alterung, die auch im Stand fortschreitet (Gummi, Dichtungen, Korrosion, Elektronik,
-   12-V-Batterie). „Reparaturen Jahr 1“ gilt für durchschnittliche 13.000 km im Jahr.  */
+   12-V-Batterie). „Reparaturen im 1. Jahr“ gilt für durchschnittliche 13.000 km im Jahr.  */
 const REP_KM_ANTEIL = 0.5;
 function repKmFaktor(km){
   return (1 - REP_KM_ANTEIL) + REP_KM_ANTEIL * Math.max(0, km||0) / KM_NORMAL;
@@ -1286,10 +1446,14 @@ function repFaktor(v, g, t){
   // Beim E-Auto wirkt sie deshalb automatisch gedämpft.
   return 1 + (roh - 1)*kurveWirkung(v);
 }
-/* Wie stark der Anstieg der Verschleißkurve greift: voll beim Verbrenner, gedämpft
-   beim E-Auto, weil Öl, Zahnriemen, Abgasanlage und Kupplung dort wegfallen.      */
+/* Wie stark der Anstieg der Verschleißkurve greift: voreingestellt voll beim Verbrenner,
+   gedämpft beim E-Auto, weil Öl, Zahnriemen, Abgasanlage und Kupplung dort wegfallen.
+   Im Modus Detailliert frei einstellbar, im Modus Einfach gilt die Voreinstellung.     */
 const KURVE_EV = 0.6;
-function kurveWirkung(v){ return v.art === "elektro" ? KURVE_EV : 1; }
+function kurveWirkung(v){
+  const w = Number(v.kurveWirkung);
+  return Math.max(0, isFinite(w) && v.kurveWirkung !== undefined ? w : stdWertArt(v.art, "kurveWirkung")) / 100;
+}
 
 /* HU/AU: erstmals drei Jahre nach Erstzulassung, danach alle zwei Jahre.
    Besitzjahr t endet, wenn das Fahrzeug (heute − Erstzulassung) + t Jahre alt ist. */
@@ -1594,10 +1758,11 @@ const HILFE = {
   reifenKm:"Nach wie vielen Kilometern ein Satz fällig ist. E-Autos sind schwer und drehmomentstark — dort hält ein Satz oft kürzer. Mit dem Schalter rechts stellst du auf Jahre um.",
   reifenJahre:"Nach wie vielen Jahren ein Satz fällig ist — die bessere Wahl, wenn du wenig fährst und die Reifen eher altern als abfahren. Nach sechs bis acht Jahren gelten Reifen auch mit gutem Profil als zu alt. Mit dem Schalter rechts geht es zurück auf Kilometer.",
   hu:"Kosten einer Hauptuntersuchung samt Abgasuntersuchung. Fällig ist sie erstmals drei Jahre nach der Erstzulassung, danach alle zwei Jahre — der Rechner setzt sie aus der Erstzulassung automatisch in die richtigen Jahre. Der Wartungsplan unten zeigt, in welche.",
-  reparatur:"Was du im ersten Jahr für Unvorhergesehenes zurücklegst. Daraus berechnet der Rechner die Reparaturkosten für jedes weitere Jahr: Sie steigen mit Alter und Kilometerstand des Fahrzeugs, und solange eine Garantie läuft, zählt nur dein Selbstbehalt. Der Betrag gilt für durchschnittlich 13.000 km im Jahr — fährst du mehr oder weniger, wird die Hälfte davon an deine Kilometer angepasst, denn die Hälfte der Reparaturen kommt vom Fahren, die andere vom Altern.",
+  reparatur:"Was du im ersten Jahr für Reparaturen zurücklegst, die keine Inspektion sind. Daraus berechnet der Rechner die Reparaturkosten für jedes weitere Jahr: Sie steigen mit Alter und Kilometerstand des Fahrzeugs, und solange eine Garantie läuft, zählt nur dein Selbstbehalt. Der Betrag gilt für durchschnittlich 13.000 km im Jahr — fährst du mehr oder weniger, wird die Hälfte davon an deine Kilometer angepasst, denn die Hälfte der Reparaturen kommt vom Fahren, die andere vom Altern.",
+  kurveWirkung:"Wie stark der Anstieg der Verschleißkurve greift. 100 % heißt: der Anstieg gilt voll, 0 % heißt: die Reparaturen bleiben auf dem Niveau des ersten Jahres, nur die Teuerung kommt dazu. Voreingestellt sind 100 % beim Verbrenner und 60 % beim E-Auto, weil dort Öl, Zündkerzen, Zahnriemen, Abgasanlage und Kupplung wegfallen — genau die Posten, die den Anstieg tragen.",
   repEsk:"Fester Aufschlag auf die Rücklage pro Jahr, zusätzlich zur allgemeinen Teuerung. Greift nur im manuellen Modus, wenn die Verschleißkurve abgeschaltet ist.",
   baujahr:"Jahr der Erstzulassung. Bestimmt, wann die HU fällig ist, treibt zusammen mit dem Kilometerstand die Reparaturkosten und begrenzt die Restlaufzeit der Garantien.",
-  kmStand:"Kilometerstand beim Kauf. Ein Achtjähriger mit 240.000 km gilt in der Kurve als deutlich älter als einer mit 60.000 km.",
+  kmStand:"Kilometerstand beim Kauf, bei einem Neuwagen also 0. Ein Achtjähriger mit 240.000 km gilt in der Kurve als deutlich älter als einer mit 60.000 km.",
 
   /* Finanzierung */
   anzahlung:"Was du bei Vertragsabschluss sofort zahlst. Sie wird vom Kaufpreis abgezogen, bevor die Rate berechnet wird.",
@@ -1733,17 +1898,22 @@ function field(id, label, unit, value, def, step, dec, onInput, title){
   d.addEventListener("click", () => {
     cur = def; inp.value = fmtFeld(def, dec, unit); onInput(def); syncFlag(); render();
   });
-  f.append(head, ir, d);
+  // Drei feste Zeilen: Beschriftung, Eingabe, Fuß (Standardwert und Zusätze).
+  // Im Raster liegen so alle Eingaben einer Reihe auf gleicher Höhe, egal wie lang die Beschriftung ist.
+  const fuss = document.createElement("div"); fuss.className = "ffuss";
+  fuss.append(d);
+  f.append(head, ir, fuss);
   return f;
 }
 
 /* Nicht veränderbarer Wert — im Modus Einfach für die Preissteigerung */
-function festwert(label, wert, dec, unit){
+function festwert(label, wert, dec, unit, key){
   const f = document.createElement("div");
   f.className = "f festwert";
   const head = document.createElement("div"); head.className = "flab";
   const lb = document.createElement("label"); lb.innerHTML = label;
   head.append(lb);
+  if(key && HILFE[key]) head.append(infoBtn(HILFE[key], label));
   const ir = document.createElement("div"); ir.className = "ir";
   const w = document.createElement("span"); w.className = "fw"; w.textContent = fmtDe(wert, dec);
   const un = document.createElement("span"); un.className = "unit"; un.textContent = unit;
@@ -1753,16 +1923,27 @@ function festwert(label, wert, dec, unit){
   return f;
 }
 
+/* Ein-/Aus-Schalter mit Beschriftung — für „Geld wird angelegt“ und „PV-Anlage vorhanden“ */
+function schaltZeile(id, text, an, onToggle, info){
+  const row = document.createElement("div"); row.className = "schaltzeile";
+  const sw = document.createElement("button");
+  sw.type = "button"; sw.className = "switch klein onoff"; sw.id = id;
+  sw.setAttribute("role","switch"); sw.setAttribute("aria-checked", String(!!an));
+  sw.append(document.createElement("span"));
+  sw.addEventListener("click", onToggle);
+  const lb = document.createElement("label"); lb.setAttribute("for", id); lb.textContent = text;
+  row.append(sw, lb);
+  if(info) row.append(info);
+  return row;
+}
+
 function renderGlobals(){
   document.getElementById("seg-kapital").hidden = !DETAIL;
   [["basis","global-basis"],["energie","global-energie"],["kapital","global-kapital"],["infl","global-infl"]].forEach(([grp,id])=>{
     const host = document.getElementById(id);
     if(host.childElementCount) return;
     if(grp === "infl" && !DETAIL){
-      GFIELDS.infl.forEach(f => host.append(festwert(f.l, GDEF[f.k], f.dec, f.u)));
-      const p = document.createElement("p"); p.className = "hint"; p.style.gridColumn = "1/-1"; p.style.margin = "0";
-      p.textContent = "Im Modus Detailliert kannst du die Preissteigerung selbst einstellen.";
-      host.append(p);
+      GFIELDS.infl.forEach(f => host.append(festwert(f.l, GDEF[f.k], f.dec, f.u, f.k)));
       return;
     }
     const gFeld = f => field("g-"+f.k, f.l, f.u, G[f.k], GDEF[f.k], f.s, f.dec,
@@ -1770,18 +1951,12 @@ function renderGlobals(){
 
     if(grp === "kapital"){
       // Schalter: Wird das Geld sonst angelegt? Wenn nicht, wird nicht abgezinst.
-      const row = document.createElement("div"); row.className = "schaltzeile";
-      const sw = document.createElement("button");
-      sw.type = "button"; sw.className = "switch klein onoff"; sw.id = "g-anlage";
-      sw.setAttribute("role","switch"); sw.setAttribute("aria-checked", String(!!G.anlage));
-      sw.append(document.createElement("span"));
-      const lb = document.createElement("label"); lb.setAttribute("for","g-anlage");
-      lb.textContent = "Geld wird angelegt";
-      sw.addEventListener("click", ()=>{ G.anlage = G.anlage ? 0 : 1; leereGlobals(); render(); });
-      row.append(sw, lb, infoBtn("Würdest du das Geld, das im Auto steckt, sonst anlegen — ob Tagesgeld, Fonds oder Anleihen? "
+      host.append(schaltZeile("g-anlage", "Geld wird über den Betrachtungszeitraum angelegt", !!G.anlage,
+        ()=>{ G.anlage = G.anlage ? 0 : 1; leereGlobals(); render(); },
+        infoBtn("Würdest du das Geld, das im Auto steckt, sonst über den Betrachtungszeitraum anlegen — ob Tagesgeld, Fonds oder Anleihen? "
         + "Dann kostet jeder Euro, den du früher ausgibst, die entgangene Rendite, und der Rechner zinst mit deiner Rendite nach Steuern ab. "
-        + "Lässt du das Geld ohnehin auf dem Girokonto liegen, schalte das aus: Dann wird mit 0 % gerechnet, und der Barwert ist einfach die Summe der Zahlungen.", "Geld wird angelegt"));
-      host.append(row);
+        + "Lässt du das Geld ohnehin auf dem Girokonto liegen, schalte das aus: Dann wird mit 0 % gerechnet, und der Barwert ist einfach die Summe der Zahlungen.",
+        "Geld wird über den Betrachtungszeitraum angelegt")));
       if(G.anlage) GFIELDS.kapital.forEach(f => host.append(gFeld(f)));
       return;
     }
@@ -1793,17 +1968,12 @@ function renderGlobals(){
     });
 
     if(grp === "energie" && DETAIL){
-      // Unterpunkt PV-Anlage: erst anhaken, dann erscheinen die Felder
+      // Unterpunkt PV-Anlage: erst einschalten, dann erscheinen die Felder
       const box = document.createElement("div"); box.className = "pvblock";
-      const cb = document.createElement("label"); cb.className = "pvcheck";
-      const c = document.createElement("input"); c.type = "checkbox"; c.id = "g-pv"; c.checked = !!G.pv;
-      c.addEventListener("change", e=>{ G.pv = e.target.checked ? 1 : 0; leereGlobals(); render(); });
-      const cs = document.createElement("span"); cs.textContent = "PV-Anlage vorhanden";
-      cb.append(c, cs);
-      const kopf = document.createElement("div"); kopf.className = "flab";
-      kopf.append(cb, infoBtn("Mit eigener PV-Anlage kannst du einen Teil des E-Autos mit Solarstrom laden. Der kostet nicht nichts, sondern die Einspeisevergütung, die dir dafür entgeht. "
-        + "Ohne PV-Anlage zählt der PV-Anteil der Fahrzeuge als Netzstrom daheim.", "PV-Anlage"));
-      box.append(kopf);
+      box.append(schaltZeile("g-pv", "PV-Anlage vorhanden", !!G.pv,
+        ()=>{ G.pv = G.pv ? 0 : 1; leereGlobals(); render(); },
+        infoBtn("Mit eigener PV-Anlage kannst du einen Teil des E-Autos mit Solarstrom laden. Der kostet nicht nichts, sondern die Einspeisevergütung, die dir dafür entgeht. "
+        + "Ohne PV-Anlage zählt der PV-Anteil der Fahrzeuge als Netzstrom daheim.", "PV-Anlage")));
       if(G.pv){
         const g2 = document.createElement("div"); g2.className = "fgrid";
         GFIELDS.energie.filter(f => f.pv).forEach(f => g2.append(gFeld(f)));
@@ -1825,34 +1995,41 @@ function leereGlobals(){
 /* Jahr für Jahr sichtbar machen, was der Rechner unterstellt */
 function wartungsplan(v){
   const reihen = wartungsplanDaten(v);
+  // Kurze Spaltenköpfe, damit die Tabelle auch auf dem Handy ohne Wischen passt
   const spalten = [
-    ["service","Service/Insp."], ["hu","HU/AU"],
-    ["reifen","Reifen"], ["rep","Reparaturen"], ["gross","Großrep."]
-  ].filter(([k]) => reihen.some(r => r[k] > 0));
+    ["service","Service"], ["hu","HU/AU"],
+    ["reifen","Reifen"], ["rep","Repara&shy;turen"], ["gross","Groß&shy;rep."]
+  ].filter(([k]) => k === "rep" || reihen.some(r => r[k] > 0));
+  const kl = k => k === "rep" ? ' class="rep"' : "";
 
   const wrap = document.createElement("div");
   wrap.className = "planwrap";
   const tbl = document.createElement("table"); tbl.className = "plan";
   let h = "<thead><tr><th>Jahr</th>";
-  spalten.forEach(([,lab]) => h += "<th>"+lab+"</th>");
+  spalten.forEach(([k,lab]) => h += "<th"+kl(k)+">"+lab+"</th>");
   h += "<th>Summe</th></tr></thead><tbody>";
   reihen.forEach(r=>{
     h += "<tr><td>"+r.t+"</td>";
-    spalten.forEach(([k]) => h += "<td"+(r[k]>0?"":' class="null"')+">"+(r[k]>0 ? nf0.format(Math.round(r[k])) : "—")+"</td>");
+    spalten.forEach(([k]) => h += '<td class="'+(k==="rep"?"rep":"")+(r[k]>0?"":" null")+'">'+(r[k]>0 ? nf0.format(Math.round(r[k])) : "—")+"</td>");
     h += '<td class="sum">'+nf0.format(Math.round(r.summe))+"</td></tr>";
   });
   const ges = reihen.reduce((a,r)=>a+r.summe,0);
   h += '<tr class="ges"><td>Σ</td>';
-  spalten.forEach(([k]) => h += "<td>"+nf0.format(Math.round(reihen.reduce((a,r)=>a+r[k],0)))+"</td>");
+  spalten.forEach(([k]) => h += "<td"+kl(k)+">"+nf0.format(Math.round(reihen.reduce((a,r)=>a+r[k],0)))+"</td>");
   h += "<td>"+nf0.format(Math.round(ges))+"</td></tr></tbody>";
   tbl.innerHTML = h;
   wrap.append(tbl);
 
   const p = document.createElement("p"); p.className="hint";
+  if(!DETAIL){
+    p.textContent = "Beträge in Euro inklusive Teuerung. Die HU setzt der Rechner aus der Erstzulassung.";
+    wrap.append(p);
+    return wrap;
+  }
   p.innerHTML = "Alle Beträge in Euro, mit der allgemeinen Teuerung fortgeschrieben. "
-    + "<em>Service/Inspektion</em> ist ein Jahresbetrag, <em>HU/AU</em> fällt nur in ihren Fälligkeitsjahren an — "
-    + "drei Jahre nach der Erstzulassung, danach alle zwei Jahre. "
-    + "<em>Reparaturen</em> wachsen aus deinem Betrag für Jahr 1 mit Alter und Kilometerstand; solange eine Garantie läuft, zählt nur dein Selbstbehalt. "
+    + "<em>Service</em> ist dein Jahresbetrag für Service und Inspektion. <em>HU/AU</em> fällt nur in ihren Fälligkeitsjahren an — "
+    + "drei Jahre nach der Erstzulassung, danach alle zwei Jahre; der Rechner setzt sie selbst. "
+    + "<em>Reparaturen</em> wachsen aus deinem Betrag fürs erste Jahr, siehe Kasten oben. "
     + "<em>Reifen</em> sind bewusst gleichmäßig verteilt: Profil verbraucht sich mit jedem Kilometer, anders als ein Werkstatttermin, der auf einen Tag fällt.";
   wrap.append(p);
   return wrap;
@@ -1881,10 +2058,7 @@ function besitzText(el, v){
     return;
   }
   if(v.fin==="leasing" || (v.fin==="kredit" && v.rkRueckgabe) || v.kaufpreis > 0){
-    el.className = "hint"; el.hidden = !alt;
-    el.innerHTML = alt
-      ? "Fahrzeug schon im Besitz? Dann gehört in <em>Kaufpreis</em> der heutige Verkaufswert. Dieses Geld steckt im Auto fest, statt Rendite zu bringen — nur so wird der Vergleich mit einem Neukauf fair."
-      : "";
+    el.className = "hint"; el.hidden = true; el.innerHTML = "";
     return;
   }
   el.hidden = false;
@@ -1928,7 +2102,7 @@ function restwertFeld(v, idx){
   rw.className="dflt"; rw.style.cursor="default"; rw.style.color="var(--ink-3)";
   rw.id = "v"+idx+"-rwdisp";
   rw.textContent = rwText(v);
-  f.append(rw);
+  f.querySelector(".ffuss").append(rw);
   return f;
 }
 /* Reifen halten: wahlweise in Kilometern oder in Jahren */
@@ -1962,9 +2136,51 @@ function reifenFeld(v, idx){
   return f;
 }
 
+/* Reparaturen im 1. Jahr: der Wert mit dem größten Hebel im Abschnitt — deshalb ein eigener
+   Kasten, der zeigt, was der Rechner daraus macht und wie stark jede Änderung wirkt.      */
+function repFeld(v, idx, f){
+  const box = document.createElement("div");
+  box.className = "repbox"; box.id = "v"+idx+"-repbox";
+  const tag = document.createElement("div"); tag.className = "rp-tag";
+  tag.textContent = "Wichtigster Schätzwert";
+  const fld = field("v"+idx+"-reparatur", f.l, f.u, v.reparatur, stdWert(v, "reparatur"), f.s, 0,
+    val => { v.reparatur = isFinite(val) ? Math.max(0, val) : 0; renderResultsOnly(); });
+  const txt = document.createElement("p"); txt.className = "rp-text";
+  txt.innerHTML = "Was du im <strong>ersten Jahr</strong> für Reparaturen ausgibst, die keine Inspektion sind — Bremsen, Fahrwerk, Elektrik, Klimaanlage. "
+    + "Die Jahre danach rechnet der Rechner selbst hoch: Der Betrag steigt mit Alter und Kilometerstand"
+    + (v.art === "elektro" ? " (beim E-Auto flacher)" : "")
+    + ", und solange eine Garantie läuft, zählt nur dein Selbstbehalt.";
+  const live = document.createElement("div"); live.className = "rp-live"; live.id = "v"+idx+"-repinfo";
+  repInfo(live, v);
+  box.append(tag, fld, txt, live);
+  return box;
+}
+function repInfo(el, v){
+  const plan = wartungsplanDaten(v);
+  const N = plan.length;
+  const g = effG(G), e = effV(v);
+  const kmF = repKmFaktor(g.km);
+  const garAnteil = garantieAnteil(e, 1, g.km);
+  let h = "";
+  if(!(v.reparatur > 0)){
+    h += '<p class="rp-warn">Mit 0 € rechnet der Rechner ' + (N > 1 ? "über alle " + N + " Jahre" : "") + " ganz ohne Reparaturen. "
+      + "Außer bei einem Neuwagen, dessen Garantie alles abdeckt, ist das zu optimistisch.</p>";
+  }
+  const extra = [];
+  if(Math.abs(kmF - 1) > 0.03)
+    extra.push("Dein Betrag gilt für " + nf0.format(KM_NORMAL) + " km im Jahr; bei deinen " + nf0.format(g.km) + " km rechnet der Rechner mit dem "
+      + nf2.format(kmF) + "-Fachen.");
+  if(garAnteil < 0.005) extra.push("Im ersten Jahr deckt die Garantie die Reparaturen ganz ab.");
+  else if(garAnteil < 0.999)
+    extra.push("Im ersten Jahr trägst du wegen der Garantie nur " + nf0.format(Math.round(garAnteil*100)) + " % davon.");
+  if(extra.length) h += '<p class="rp-klein">' + extra.join(" ") + "</p>";
+  el.innerHTML = h;
+  el.hidden = !h;                                    // ohne Hinweis kein leerer Abschnitt im Kasten
+}
+
 function rwText(v){
   const verlust = v.kaufpreis - restwert(v);
-  const zusatz = v.kaufpreis>0 ? " · Wertverlust nominal " + eur(verlust) : "";
+  const zusatz = (v.kaufpreis>0 && DETAIL) ? " · Wertverlust nominal " + eur(verlust) : "";
   if(v.restwertModus === "eur")
     return (v.kaufpreis>0 ? "= " + nf1.format(restwert(v)/v.kaufpreis*100) + " % vom Kaufpreis" : "absoluter Betrag") + zusatz;
   return "= " + eur(restwert(v)) + zusatz;
@@ -2025,13 +2241,18 @@ function kreditInfo(el, v){
   if(mehr > 0){
     const ueber = nf0.format(G.km - v.rkFreikm) + " km/Jahr über der Vereinbarung × " + fmtDe(v.rkMehrCt, 1)
       + " ct × " + fmtDe(jahre, 1) + " Jahre = " + eur(mehr*jahre);
-    const kmEnde = nf0.format(Math.round(((v.kmStand||0) + (G.km||0)*Math.max(1, Math.round(G.years)))/1000)*1000);
     kmZeile = v.rkRueckgabe
       ? "Mehrkilometer: " + ueber + " — Nachzahlung an die Bank bei Rückgabe."
-      : "Mehrkilometer: " + ueber + " — die fielen nur bei Rückgabe an. Behältst du das Auto, zahlst du nichts; "
-        + "achte nur darauf, dass dein Restwert zu einem Auto mit rund " + kmEnde + " km passt.";
+      : "Mehrkilometer: " + ueber + " — die fielen nur bei Rückgabe an.";
   }
-  el.className = "ratebox";
+  if(!DETAIL){
+    // Modus Einfach: Rate und Urteil, ohne Rechenweg
+    weg = "";
+    urteil = v.rkRueckgabe ? "Bei Rückgabe entfällt die Schlussrate, dafür gibt es keinen Restwert — wirtschaftlich ein Leasing."
+           : urteil.replace(" — finanzieren lohnt sich, das Geld bleibt solange angelegt.", " — finanzieren lohnt sich.");
+    if(kmZeile) kmZeile = "Mehrkilometer: " + eur(mehr*jahre) + (v.rkRueckgabe ? " bei Rückgabe." : ", nur fällig bei Rückgabe.");
+  }
+  el.className = "ratebox" + (weg ? "" : " kompakt");
   el.dataset.warn = warn ? "1" : "0";
   el.innerHTML = '<div class="rb-kopf"><div class="rb-lab">'+lab+'</div><div class="rb-big">'+big+'</div><div class="rb-klein">'+klein+'</div></div>'
     + '<div class="rb-weg">'+weg+'</div><div class="rb-urteil">'+urteil+'</div>'
@@ -2051,13 +2272,26 @@ function garantieHinweis(v){
   const p = document.createElement("p"); p.className = "hint";
   p.id = "v" + vehicles.indexOf(v) + "-garhint";
   const alter = new Date().getFullYear() - (v.baujahr||new Date().getFullYear());
+  if(!DETAIL){
+    p.textContent = (v.garBezug === "heute" ? "Eingetragen ist die Restlaufzeit ab heute. "
+                                             : "Gerechnet ab Erstzulassung — verstrichene Jahre zieht der Rechner ab. ")
+      + "Die Garantie deckt nur Reparaturen, keine Wartung.";
+    return p;
+  }
   p.innerHTML = (v.garBezug === "heute"
       ? "Eingetragen ist die <strong>Restlaufzeit ab heute</strong> — so, wie sie im Inserat oder Garantieheft steht. Das Baujahr spielt für die Garantie dann keine Rolle. "
-      : "Beide Zeiträume zählen <strong>ab Erstzulassung</strong>, nicht ab Kauf — bei diesem Fahrzeug sind davon schon " + nf0.format(Math.max(0, alter)) + " Jahre verstrichen. Kennst du nur die Restlaufzeit, stell oben auf „ab heute“ um. ")
+      : "Beide Zeiträume zählen <strong>ab Erstzulassung</strong>, nicht ab Kauf — bei diesem Fahrzeug sind davon schon " + nf0.format(Math.max(0, alter)) + " Jahre verstrichen. Kennst du nur die Restlaufzeit, stell oben auf „ab heute“ um.");
+  return p;
+}
+/* Allgemeines zur Garantie — steht im Info-Icon neben „Garantie zählt“ */
+function garantieInfoText(v){
+  return "<em>Ab Erstzulassung:</em> Du trägst die Gesamtdauer ein, etwa 8 Jahre Batteriegarantie — das Tool zieht die schon verstrichenen Jahre ab. "
+    + "<em>Ab heute:</em> Du trägst ein, wie lange die Garantie noch läuft, etwa „noch 3 Jahre“ aus dem Inserat. Beim Umschalten rechnet das Tool die eingetragenen Werte passend um.<br><br>"
     + "Jede Garantie endet nach Jahren oder Kilometern, je nachdem, was zuerst eintritt; endet sie mitten im Jahr, zählt das Jahr anteilig. "
     + "Gedeckelt wird ausschließlich die <em>Reparaturrücklage</em>. Inspektion, Reifen und HU bleiben unberührt, denn eine Garantie deckt Defekte, keinen Verschleiß und keine Wartung. "
-    + "Typisch beim E-Auto: vier Jahre auf das Fahrzeug, acht Jahre auf Antriebsstrang und Batterie — Letztere meist zusätzlich an eine Mindestkapazität gekoppelt.";
-  return p;
+    + (v.art === "elektro"
+      ? "Typisch beim E-Auto: vier Jahre auf das Fahrzeug, acht Jahre auf Antriebsstrang und Batterie — Letztere meist zusätzlich an eine Mindestkapazität gekoppelt."
+      : "Beim Verbrenner gibt nur ein Teil der Hersteller eine eigene, längere Garantie auf den Antrieb — gibt es keine, bleibt <em>Garantie Antrieb</em> auf 0.");
 }
 
 /* Verschleißkurve: Alter und Laufleistung treiben die Reparaturrücklage. */
@@ -2080,21 +2314,32 @@ function verschleissBlock(v, idx){
   kurveInfo(out, v, idx);
   wrap.append(out);
 
+  const g = document.createElement("div");
+  g.className="fgrid"; g.style.marginTop="12px";
   if(!v.altersKurve){
-    const g = document.createElement("div");
-    g.className="fgrid"; g.style.marginTop="12px";
     g.append(field("v"+idx+"-repEsk", "Reparaturen steigen um", "% p.a.", v.repEsk, VDEF.repEsk, 1, 0,
       val=>{ v.repEsk = isFinite(val)?val:0; renderResultsOnly(); },
       "Fester Aufschlag pro Jahr, zusätzlich zur allgemeinen Teuerung."));
-    wrap.append(g);
+  } else {
+    // Wie stark der Anstieg greift — voreingestellt 100 % beim Verbrenner, 60 % beim E-Auto
+    g.append(field("v"+idx+"-kurveWirkung", "Wirkung der Kurve", "%", v.kurveWirkung ?? stdWert(v, "kurveWirkung"), stdWert(v, "kurveWirkung"), 5, 0,
+      val=>{ v.kurveWirkung = isFinite(val) ? Math.max(0, val) : stdWert(v, "kurveWirkung"); renderResultsOnly(); }));
   }
+  wrap.append(g);
 
-  if(v.altersKurve && v.art==="elektro"){
-    const ev = document.createElement("p"); ev.className="hint";
-    ev.innerHTML = "<strong>Beim E-Auto steigt die Kurve automatisch nur zu " + nf0.format(KURVE_EV*100) + " % so stark wie beim Verbrenner.</strong> "
-      + "Was wegfällt: Ölwechsel, Zündkerzen, Zahnriemen, Abgasanlage und Partikelfilter, Kupplung, Einspritzung — genau die Posten, die den Anstieg der Kurve tragen. "
-      + "Was hinzukommt: Der TÜV-Report nennt bei E-Autos Achsaufhängungen (hohes Batteriegewicht), Bremsscheiben (Korrosion, weil die Reibbremse durch Rekuperation selten arbeitet) und Beleuchtung. "
-      + "Die " + nf0.format(KURVE_EV*100) + " % sind eine begründete Annahme, keine Messung — für E-Autos jenseits von sieben Jahren gibt es schlicht noch keine belastbare Datenbasis.";
+  if(v.altersKurve){
+    // Infokasten: Beim E-Auto steigt die Kurve schwächer an
+    const ev = document.createElement("div"); ev.className = "infobox"; ev.id = "v"+idx+"-kurvebox";
+    const ew = nf0.format(KURVE_EV*100);
+    ev.innerHTML = v.art === "elektro"
+      ? "<strong>Beim E-Auto steigt die Kurve schwächer an — voreingestellt sind " + ew + " % statt 100 %.</strong> "
+        + "Was wegfällt: Ölwechsel, Zündkerzen, Zahnriemen, Abgasanlage und Partikelfilter, Kupplung, Einspritzung — genau die Posten, die den Anstieg der Kurve beim Verbrenner tragen. "
+        + "Was hinzukommt: Der TÜV-Report nennt bei E-Autos Achsaufhängungen (hohes Batteriegewicht), Bremsscheiben (Korrosion, weil die Reibbremse durch Rekuperation selten arbeitet) und Beleuchtung. "
+        + "Die " + ew + " % sind eine begründete Annahme, keine Messung — für E-Autos jenseits von sieben Jahren gibt es schlicht noch keine belastbare Datenbasis. "
+        + "Rechnest du vorsichtig, setz den Wert höher."
+      : "<strong>Beim Verbrenner gilt die Kurve voll — voreingestellt sind 100 %.</strong> "
+        + "Sie stammt aus einer Flotte, die fast nur aus Verbrennern besteht. Beim E-Auto steigt sie schwächer an, voreingestellt " + ew + " %, "
+        + "weil dort Ölwechsel, Zahnriemen, Abgasanlage und Kupplung wegfallen. Weniger als 100 % setzt du hier nur, wenn dein Modell nachweislich robuster altert als der Durchschnitt.";
     wrap.append(ev);
   }
   return wrap;
@@ -2135,7 +2380,7 @@ function kurveInfo(el, v, idx){
     p2.style.marginTop = "8px";
     p2.textContent = rel > 1
       ? "Reparaturbedarf laut Kurve: das " + nf1.format(rel) + "-fache eines vier- bis fünfjährigen Fahrzeugs. "
-        + "Die Kurve hebt nur den Verlauf an, nicht den Startwert — prüfe, ob „Reparaturen Jahr 1“ dieses Niveau abbildet."
+        + "Die Kurve hebt nur den Verlauf an, nicht den Startwert — prüfe, ob „Reparaturen im 1. Jahr“ dieses Niveau abbildet."
       : "Reparaturbedarf laut Kurve: nur das " + nf2.format(rel) + "-fache eines vier- bis fünfjährigen Fahrzeugs. "
         + "Für ein so junges Auto darf der Startwert entsprechend niedrig liegen.";
     el.append(p2);
@@ -2143,8 +2388,8 @@ function kurveInfo(el, v, idx){
 
   const note = document.createElement("p"); note.className="hint";
   note.innerHTML = aN > KURVE_DAT_BIS
-    ? "Bis 9 Jahre folgt die Kurve den Kostenklassen des DAT-Reports 2025, darüber den Mängelquoten des TÜV-Reports 2026 (18,3 % bei 8–9 Jahren bis 40,3 % bei 20–21). Zwischen 10 und 15 Jahren steigt der Bedarf am steilsten, danach flacht er ab. Das <em>Niveau</em> bleibt deine Schätzung im Feld „Reparaturen Jahr 1“ — die Kurve liefert nur die Form."
-    : "Die Kurve liefert nur die <em>Form</em> des Anstiegs — aus den Altersklassen des DAT-Reports 2025 (61 € bis 3 Jahre, 137 € bis 6 Jahre, 226 € darüber). Das <em>Niveau</em> bleibt deine Schätzung im Feld „Reparaturen Jahr 1“.";
+    ? "Bis 9 Jahre folgt die Kurve den Kostenklassen des DAT-Reports 2025, darüber den Mängelquoten des TÜV-Reports 2026 (18,3 % bei 8–9 Jahren bis 40,3 % bei 20–21). Zwischen 10 und 15 Jahren steigt der Bedarf am steilsten, danach flacht er ab. Das <em>Niveau</em> bleibt deine Schätzung im Feld „Reparaturen im 1. Jahr“ — die Kurve liefert nur die Form."
+    : "Die Kurve liefert nur die <em>Form</em> des Anstiegs — aus den Altersklassen des DAT-Reports 2025 (61 € bis 3 Jahre, 137 € bis 6 Jahre, 226 € darüber). Das <em>Niveau</em> bleibt deine Schätzung im Feld „Reparaturen im 1. Jahr“.";
   el.append(note);
 }
 
@@ -2239,9 +2484,6 @@ function grossBlock(v, idx){
   });
   wrap.append(add);
 
-  const hint = document.createElement("p"); hint.className="hint";
-  hint.textContent = "Bei einem Gebrauchten ist das der ehrlichste Teil der Rechnung: Was steht in den nächsten Jahren an, und was kostet es? Die Vorlagen sind grobe Richtwerte für einen Mittelklassewagen — eine Werkstatt nennt dir für dein konkretes Modell bessere Zahlen.";
-  wrap.append(hint);
   return wrap;
 }
 
@@ -2301,9 +2543,8 @@ function statusText(el, v, res){
   if(v.art==="elektro" && !DETAIL){
     el.className = "okline";
     el.textContent = res
-      ? "Geladen wird mit Haushaltsstrom zu " + nf1.format(res.mix*100) + " ct/kWh, inkl. " + nf0.format(VDEF.ladeverlust)
-        + " % Ladeverlust: " + nf0.format(res.kwhBrutto) + " kWh und " + eur(res.kwhBrutto*res.mix) + " im ersten Jahr. "
-        + "PV-Strom und öffentliches Laden gibt es im Modus Detailliert."
+      ? "Strom Jahr 1: " + eur(res.kwhBrutto*res.mix) + " (Haushaltsstrom inkl. Ladeverlust)"
+        + (VDEF.thg > 0 ? ", abzüglich " + eur(VDEF.thg) + " THG-Prämie" : "")
       : "";
     return;
   }
@@ -2334,15 +2575,17 @@ function statusText(el, v, res){
 /* Kraftstoffart wechseln — mit passenden Startwerten für das neue Antriebskonzept */
 function setzeArt(v, art){
   if(v.art === art) return;
+  const alt = v.art;
+  // Nur Standardwerte ziehen mit — was du selbst eingetragen hast, bleibt stehen
+  ART_FELDER.forEach(k => {
+    if(Math.abs((v[k]||0) - stdWertArt(alt, k)) < 1e-9) v[k] = stdWertArt(art, k);
+  });
+  // Liter und Kilowattstunden passen nicht zueinander: offensichtlich falsche Einheit ersetzen
+  if(art === "elektro" && v.verbrauch < 10) v.verbrauch = stdWertArt(art, "verbrauch");
+  if(art !== "elektro" && alt === "elektro" && v.verbrauch > 14) v.verbrauch = stdWertArt(art, "verbrauch");
+  if(art === "elektro" && v.aPV+v.aHeim+v.aAC+v.aDC === 0)
+    ["aPV","aHeim","aAC","aDC"].forEach(k => { v[k] = stdWertArt(art, k); });
   v.art = art;
-  if(v.art==="elektro"){
-    if(v.verbrauch>30) v.verbrauch = 17;
-    if(v.aPV+v.aHeim+v.aAC+v.aDC===0){ v.aPV=35; v.aHeim=50; v.aAC=5; v.aDC=10; }
-    if(v.steuer===VDEF.steuer) v.steuer = 0;
-    if(!v.garFzg && !v.garAntrieb){ v.garFzg = 4; v.garAntrieb = 8; }  // marktüblich beim E-Auto
-  } else {
-    if(v.verbrauch<3) v.verbrauch = 8;
-  }
 }
 
 function artWahl(v, idx){
@@ -2390,7 +2633,7 @@ function renderVehicles(){
     const nm = document.createElement("input");
     nm.type="text"; nm.className="vname"; nm.id="v"+idx+"-name"; nm.value=v.name;
     nm.style.cssText="border:0;background:transparent;color:inherit;width:100%;padding:2px 0;outline:none";
-    nm.setAttribute("aria-label","Name Fahrzeug "+(idx+1));
+    nm.setAttribute("aria-label","Name Fahrzeug "+(idx+1)); nm.placeholder = "Name des Fahrzeugs"; nm.title = "Zum Umbenennen hineinklicken";
     nm.addEventListener("input", e => { v.name = e.target.value; renderResultsOnly(); });
     nameWrap.append(nm);
 
@@ -2407,7 +2650,6 @@ function renderVehicles(){
     const del = document.createElement("button");
     del.type="button"; del.className="iconbtn"; del.title="Fahrzeug entfernen"; del.textContent="×";
     del.setAttribute("aria-label","Fahrzeug "+(idx+1)+" entfernen");
-    del.disabled = vehicles.length<=1;
     del.addEventListener("click", ()=>{ vehicles.splice(idx,1); render(); });
     right.append(tot, dup, del);
     hd.append(chip, nameWrap, right);
@@ -2429,16 +2671,24 @@ function renderVehicles(){
       fields.forEach(f=>{
         if(!DETAIL && !f.e && !alleEinfach) return;
         if(f.custom === "reifen"){ g.append(reifenFeld(v, idx)); return; }
+        if(f.custom === "rep"){ g.append(repFeld(v, idx, f)); return; }
         if(f.only && v.art!==f.only) return;
         if(f.pvNur && !G.pv) return;                 // PV-Anteil nur mit PV-Anlage
         if(f.notFor && v.fin===f.notFor) return;
         if(f.nurKauf && istBesitz(v)) return;
         if(f.modus && (v.rateModus||"zins") !== f.modus) return;
-        const unit = (f.unitEl && v.art==="elektro") ? f.unitEl : f.u;
+        const el   = v.art === "elektro";
+        const unit = (f.unitEl && el) ? f.unitEl : f.u;
         const rest = v.garBezug === "heute";
-        const lab  = (f.lBesitz && istBesitz(v)) ? f.lBesitz : (f.lRest && rest) ? f.lRest : f.l;
-        g.append(field("v"+idx+"-"+f.k, lab, unit, v[f.k], VDEF[f.k], f.s, f.dec,
-          val => { v[f.k] = isFinite(val) ? val : 0; renderResultsOnly(); }, (f.tRest && rest) ? f.tRest : f.t));
+        // Beschriftung und Erklärung: Besitz > Restlaufzeit > Normalfall, jeweils mit E-Auto-Variante
+        const lab = (f.lBesitz && istBesitz(v)) ? f.lBesitz
+                  : (f.lRest && rest) ? ((el && f.lRestEl) || f.lRest)
+                  : ((el && f.lEl) || f.l);
+        const tip = (f.tBesitz && istBesitz(v)) ? f.tBesitz
+                  : (f.tRest && rest) ? ((el && f.tRestEl) || f.tRest)
+                  : ((el && f.tEl) || f.t);
+        g.append(field("v"+idx+"-"+f.k, lab, unit, v[f.k], stdWert(v, f.k), f.s, f.dec,
+          val => { v[f.k] = isFinite(val) ? val : 0; renderResultsOnly(); }, tip));
       });
       d.append(s, g);
       if(extra) extra.forEach(el=>d.append(el));
@@ -2495,7 +2745,9 @@ function renderVehicles(){
       c.type="checkbox"; c.id="v"+idx+"-rkRueckgabe"; c.checked=!!v.rkRueckgabe; c.style.marginTop="2px";
       c.addEventListener("change", e=>{ v.rkRueckgabe = e.target.checked?1:0; render(); });
       const cs = document.createElement("span");
-      cs.innerHTML = "<strong>Fahrzeug am Ende zurückgeben</strong> statt die Schlussrate zu zahlen (Drei-Wege-Finanzierung). Dann rechnet die Bank die Mehrkilometer ab — und es gibt keinen Restwerterlös.";
+      cs.innerHTML = DETAIL
+        ? "<strong>Fahrzeug am Ende zurückgeben</strong> statt die Schlussrate zu zahlen (Drei-Wege-Finanzierung)."
+        : "<strong>Fahrzeug am Ende zurückgeben</strong> — keine Schlussrate, dafür kein Restwert";
       cb.append(c, cs);
       kExtra.push(cb);
 
@@ -2530,7 +2782,7 @@ function renderVehicles(){
         });
         tg.append(bt);
       });
-      row.append(ml, tg, infoBtn("<em>Ab Erstzulassung:</em> Du trägst die Gesamtdauer ein, etwa 8 Jahre Batteriegarantie — das Tool zieht die schon verstrichenen Jahre ab. <em>Ab heute:</em> Du trägst ein, wie lange die Garantie noch läuft, etwa „noch 3 Jahre“ aus dem Inserat. Beim Umschalten rechnet das Tool die eingetragenen Werte passend um.", "Garantie"));
+      row.append(ml, tg, infoBtn(garantieInfoText(v), "Garantie"));
       garSeg.querySelector(".fgrid").before(row);
       garSeg.querySelector(".fgrid").classList.add("g3");
     }
@@ -2575,21 +2827,18 @@ function renderVehicles(){
 
     bd.append(mkSeg("fix", DETAIL ? "Versicherung, Steuer & Prämien" : "Versicherung & Steuer", VF.fix, true, null, fixBadge(v)));
     const wExtra = [];
-    const rh = document.createElement("p"); rh.className = "hint";
-    rh.innerHTML = "<strong>Reparaturen Jahr 1</strong> ist der Ausgangswert: Daraus berechnet der Rechner die Reparaturkosten für jedes weitere Jahr. "
-      + "Sie steigen mit Alter und Kilometerstand des Fahrzeugs" + (v.art==="elektro" ? " (beim E-Auto flacher als beim Verbrenner)" : "")
-      + ", und solange eine Garantie läuft, zählt nur dein Selbstbehalt. Die HU setzt der Rechner aus der Erstzulassung selbst an.";
-    wExtra.push(rh);
     const plan = document.createElement("div"); plan.id = "v"+idx+"-plan";
     plan.append(wartungsplan(v));
     wExtra.push(plan);
     if(DETAIL) wExtra.push(verschleissBlock(v, idx), grossBlock(v, idx));
     bd.append(mkSeg("wartung","Wartung & Verschleiß", VF.wartung, !DETAIL, wExtra, wartungBadge(v)));
 
-    if(res && res.notes.length){
+    // Monatsrate, Zins und Mehrkilometer der Finanzierung stehen schon im Kasten darüber (im PDF bleiben sie)
+    const notizen = res ? res.notes.filter(t => !/^(Monatsrate|Effektiver Sollzins|Du fährst|Rückgabe gewählt|Mehrkilometer bei Rückgabe)/.test(t)) : [];
+    if(notizen.length){
       const n = document.createElement("p"); n.className="hint";
       n.style.marginTop="12px";
-      n.textContent = res.notes.join(" ");
+      n.textContent = notizen.join(" ");
       bd.append(n);
     }
 
@@ -2598,7 +2847,7 @@ function renderVehicles(){
   });
 
   document.getElementById("vcount").textContent = vehicles.length + " von " + MAX_FZG;
-  document.getElementById("add-v").disabled = vehicles.length >= MAX_FZG;
+  zeigeNeuFzg();
 
   if(focusId){
     const el = document.getElementById(focusId);
@@ -2638,7 +2887,9 @@ function renderRank(results){
 
   document.getElementById("rank-note").textContent =
     (MODE==="pv" ? "Barwert · " : "nominal · ") + Math.round(G.years) + " Jahre · " + nf0.format(G.km) + " km/Jahr";
-  document.getElementById("rank-hint").innerHTML = MODE==="pv"
+  document.getElementById("rank-hint").innerHTML = (MODE==="pv" && !DETAIL)
+    ? "Barwerte, abgezinst mit " + nf2.format(netRate(G)) + " % p.a."
+    : MODE==="pv"
     ? "<strong>Barwert:</strong> alle Zahlungen auf heute abgezinst mit " + nf2.format(netRate(G)) + " % p.a. — "
       + (!effG(G).anlage ? "also gar nicht, weil das Geld nicht angelegt wird." : DETAIL ? "deiner Rendite nach Steuern." : "einer typischen Rendite nach Steuern (Standardwert, im Modus Detailliert änderbar).")
       + " Kapitalkosten sind dadurch enthalten, nur so sind Barkauf, Kredit und Leasing fair vergleichbar."
@@ -2651,8 +2902,7 @@ function rateHint(){
   if(!rh) return;
   rh.innerHTML = G.anlage
     ? "Daraus ergibt sich eine Nettorendite von <strong>" + nf2.format(netRate(G)) +
-      " % p.a.</strong> Sie ist zugleich der Kalkulationszins des ganzen Modells: Geld, das im Auto steckt, kann nicht angelegt werden. " +
-      "Trag die Rendite ein, die du realistisch erwartest — fürs Tagesgeld weniger, für einen Aktienfonds mehr."
+      " % p.a.</strong> Sie ist zugleich der Kalkulationszins des ganzen Modells: Geld, das im Auto steckt, kann nicht angelegt werden."
     : "Ohne Geldanlage wird mit <strong>0 %</strong> abgezinst: Der Barwert ist dann einfach die Summe aller Zahlungen. Eine Finanzierung bringt dann keinen Zinsvorteil mehr — bei 0 % Sollzins kommt sie aufs Gleiche heraus wie der Barkauf, mit Zinsen wird sie teurer.";
 }
 
@@ -2683,12 +2933,12 @@ function renderUrteil(results){
 function chartBreite(boxId){
   const box = document.getElementById(boxId);
   const w = box ? box.clientWidth : 0;
-  return Math.max(480, Math.round(w || 640));
+  return Math.max(280, Math.round(w || 640));          // auf dem Handy in echter Breite statt verkleinert
 }
 
 function renderLine(results){
   const svg = document.getElementById("svg-line");
-  const W=chartBreite("box-line"), H=380, ml=66, mr=16, mt=14, mb=42;
+  const W=chartBreite("box-line"), schmal = W < 520, H = schmal ? 300 : 380, ml = schmal ? 52 : 66, mr=16, mt=14, mb=42;
   svg.setAttribute("viewBox","0 0 "+W+" "+H);
   const pw = W-ml-mr, ph = H-mt-mb;
   /* Erst den Schnittpunkt der beiden besten Fahrzeuge suchen — auch weit
@@ -2738,7 +2988,7 @@ function renderLine(results){
     out += '<line x1="'+ml+'" y1="'+y.toFixed(1)+'" x2="'+(W-mr)+'" y2="'+y.toFixed(1)+'" stroke="'+cssv("--grid")+'" stroke-width="1"/>';
     out += '<text x="'+(ml-9)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace" fill="'+cssv("--ink-3")+'">'+nf0.format(Math.round(val/1000))+'k €</text>';
   }
-  const stepX = niceStep(kmMax, W > 900 ? 12 : 6);
+  const stepX = niceStep(kmMax, W > 900 ? 12 : schmal ? 5 : 6);
   for(let km=0; km<=kmMax+1; km+=stepX){
     const x=X(km);
     out += '<line x1="'+x.toFixed(1)+'" y1="'+mt+'" x2="'+x.toFixed(1)+'" y2="'+(mt+ph)+'" stroke="'+cssv("--grid")+'" stroke-width="1" opacity=".55"/>';
@@ -2801,11 +3051,11 @@ function renderLine(results){
   if(bePts.length){
     const weit = bePts.every(p => p.km > G.km*1.6);
     beNote.innerHTML = "Break-even bei " + bePts.map(p=>"<strong>"+nf0.format(Math.round(p.km/500)*500)+" km/Jahr</strong>").join(" und ") +
-      " — darunter und darüber führt jeweils ein anderes der beiden besten Fahrzeuge." +
-      (weit ? " Das liegt weit über deinem Profil von " + nf0.format(G.km) + " km: In deinem Bereich entscheidet nicht der Verbrauch, sondern der Wertverlust." : "");
+      (!DETAIL ? "." : " — darunter und darüber führt jeweils ein anderes der beiden besten Fahrzeuge." +
+      (weit ? " Das liegt weit über deinem Profil von " + nf0.format(G.km) + " km: In deinem Bereich entscheidet nicht der Verbrauch, sondern der Wertverlust." : ""));
   } else {
-    beNote.textContent = "Bis " + nf0.format(kmMax) + " km/Jahr kreuzen sich die beiden günstigsten Fahrzeuge nicht — "
-      + "die Rangfolge kippt durch die Fahrleistung allein nicht.";
+    beNote.textContent = "Bis " + nf0.format(kmMax) + " km/Jahr kreuzen sich die beiden günstigsten Fahrzeuge nicht"
+      + (DETAIL ? " — die Rangfolge kippt durch die Fahrleistung allein nicht." : ".");
   }
 
   // Hover
@@ -2836,11 +3086,17 @@ function renderLine(results){
     tip.style.left = Math.max(0,left)+"px";
     tip.style.top  = "8px";
   };
-  hit.addEventListener("mousemove", move);
-  hit.addEventListener("touchmove", ev=>{ ev.preventDefault(); move(ev); }, {passive:false});
+  /* Zeiger statt Maus und Touch getrennt: Auf dem Handy bleibt senkrechtes Scrollen über dem
+     Diagramm möglich (touch-action am Kasten), Tippen oder waagerechtes Wischen zeigt die Werte. */
   const leave = ()=>{ tip.hidden=true; cross.setAttribute("opacity","0"); };
-  hit.addEventListener("mouseleave", leave);
-  hit.addEventListener("touchend", leave);
+  let tipTimer = null;
+  hit.addEventListener("pointermove", ev => { clearTimeout(tipTimer); move(ev); });
+  hit.addEventListener("pointerdown", ev => { clearTimeout(tipTimer); move(ev); });
+  hit.addEventListener("pointerleave", ev => {
+    if(ev.pointerType === "mouse") leave();
+    else { clearTimeout(tipTimer); tipTimer = setTimeout(leave, 2500); }
+  });
+  hit.addEventListener("pointercancel", leave);
 }
 function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
@@ -2850,7 +3106,7 @@ function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<"
 function renderStack(results){
   const svg = document.getElementById("svg-stack");
   const n = results.length;
-  const W=chartBreite("box-stack"), ml=118, mr=58, mt=10, mb=34;
+  const W=chartBreite("box-stack"), schmal = W < 520, ml = schmal ? 6 : 118, mr = schmal ? 44 : 58, mt=10, mb=34;   // schmal: Namen stehen über dem Balken
   const rowH = 46, gap = 14;
   const ph = n*rowH + (n-1)*gap;
   const H = mt+ph+mb;
@@ -2873,14 +3129,14 @@ function renderStack(results){
   for(let t=0;t<=nTick;t++){
     const val = xStep*t, x=X(val);
     out += '<line x1="'+x.toFixed(1)+'" y1="'+mt+'" x2="'+x.toFixed(1)+'" y2="'+(mt+ph)+'" stroke="'+cssv("--grid")+'" stroke-width="1"/>';
-    out += '<text x="'+x.toFixed(1)+'" y="'+(mt+ph+19)+'" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="'+cssv("--ink-3")+'">'+nf0.format(Math.round(val/1000))+'k €</text>';
+    out += '<text x="'+x.toFixed(1)+'" y="'+(mt+ph+19)+'" text-anchor="'+(schmal && t===0 ? "start" : "middle")+'" font-size="11" font-family="IBM Plex Mono, monospace" fill="'+cssv("--ink-3")+'">'+nf0.format(Math.round(val/1000))+'k €</text>';
   }
 
   sorted.forEach((row, k)=>{
     const v = vehicles[row.i], r = row.r;
     const y = mt + k*(rowH+gap);
-    const barY = y + 12, barH = rowH-16;
-    out += '<text x="0" y="'+(y+10)+'" font-size="12" font-weight="600" font-family="Archivo, sans-serif" fill="'+cssv("--ink")+'">'+escapeHtml((v.name||"Fahrzeug "+(row.i+1)).slice(0, W > 700 ? 40 : 22))+'</text>';
+    const barY = y + (schmal ? 16 : 12), barH = rowH - (schmal ? 18 : 16);   // schmal: Platz für den Namen darüber
+    out += '<text x="0" y="'+(y+10)+'" font-size="12" font-weight="600" font-family="Archivo, sans-serif" fill="'+cssv("--ink")+'">'+escapeHtml((v.name||"Fahrzeug "+(row.i+1)).slice(0, W > 700 ? 40 : schmal ? 34 : 22))+'</text>';
     let x = ml;
     BLOCKS.forEach(b=>{
       const val = r.blocks[b.k];
@@ -2914,7 +3170,7 @@ function renderEtf(results){
   const N = Math.max(1, Math.round(G.years));
   const r = netRate(G)/100;
   const svg = document.getElementById("svg-etf");
-  const W=chartBreite("box-etf"), H=340, ml=70, mr=24, mt=14, mb=40;
+  const W=chartBreite("box-etf"), schmal = W < 520, H = schmal ? 280 : 340, ml = schmal ? 54 : 70, mr = schmal ? 14 : 24, mt=14, mb=40;
   svg.setAttribute("viewBox","0 0 "+W+" "+H);
   const pw=W-ml-mr, ph=H-mt-mb;
 
@@ -3108,24 +3364,30 @@ function renderFin(){
          (c.hypothetisch ? ' <span class="wftag">Annahme</span>' : '')+
          '<div style="color:var(--ink-3);font-size:11px;font-family:var(--mono);margin-top:2px">'+
          (c.angebot ? 'Angebot: ' : '')+nf2.format(c.zins)+' % · '+Math.round(c.terms.klaufzeit)+' Monate · '+eur(c.rate)+'/Monat</div></td>'+
-         '<td>'+eur(c.barKosten)+'</td>'+
-         '<td>'+eur(c.finKosten)+'</td>'+
-         '<td style="font-weight:600;color:'+(pos?cssv("--neg"):cssv("--win"))+'">'+(pos?"+":"")+eur(c.vorteil)+'</td>'+
-         '<td>'+(c.kipp!==null ? nf2.format(c.kipp)+" %" : "—")+'</td></tr>';
+         '<td data-l="Sofort bezahlt">'+eur(c.barKosten)+'</td>'+
+         '<td data-l="Finanziert">'+eur(c.finKosten)+'</td>'+
+         '<td data-l="Vorteil" style="font-weight:600;color:'+(pos?cssv("--neg"):cssv("--win"))+'">'+(pos?"+":"")+eur(c.vorteil)+'</td>'+
+         '<td data-l="Kipppunkt Zins">'+(c.kipp!==null ? nf2.format(c.kipp)+" %" : "—")+'</td></tr>';
   });
   h += "</tbody>";
   document.getElementById("tbl-fin").innerHTML = h;
   const wb = document.getElementById("wf-bar");
   if(!document.getElementById("g-wfAn") || wb.dataset.an !== (G.wfAn ? "1" : "0")) wfBar();
 
-  document.getElementById("fin-hint").innerHTML = any
+  document.getElementById("fin-hint").innerHTML = (any && !DETAIL)
+    ? "<strong>Vorteil</strong> ist, was dir die spätere Zahlung nach " + N + " Jahren wert ist."
+    : any
     ? "Beide Spalten zeigen die vollen Kosten desselben Fahrzeugs, aufgezinst auf das Ende des Zeitraums — einmal sofort bezahlt, einmal in Raten. " +
-      "Die Differenz in der Spalte <strong>Vorteil</strong> ist das, was dir die spätere Zahlung nach " + N + " Jahren wert ist. " +
-      "Zeilen mit <span class=\"wftag\">Annahme</span> betreffen Fahrzeuge, die auf Barkauf stehen — sie zeigen, was ein Finanzierungsangebot wert wäre, " +
-      "und <strong>ändern die Rangfolge oben nicht</strong>. " +
-      "Der Kipppunkt in der letzten Spalte ist der Sollzins, ab dem sich das umdreht — er liegt nahe bei deiner <em>Nettorendite</em> von " +
-      nf2.format(netRate(G)) + " %, nicht bei der Bruttorendite. Das ist der Fehler, den die meisten Vergleiche machen."
+      "Die Differenz in der Spalte <strong>Vorteil</strong> ist das, was dir die spätere Zahlung nach " + N + " Jahren wert ist."
     : "";
+  // Annahme-Zeilen und Kipppunkt erklärt das Info-Icon neben der Überschrift (mit der aktuellen Nettorendite)
+  const fi = document.getElementById("fin-info");
+  fi.textContent = "";
+  fi.append(infoBtn("Zeilen mit <span class=\"wftag\">Annahme</span> betreffen Fahrzeuge, die auf Barkauf stehen — sie zeigen, was ein Finanzierungsangebot wert wäre, "
+    + "und <em>ändern die Rangfolge oben nicht</em>.<br><br>"
+    + "Der <em>Kipppunkt</em> in der letzten Spalte ist der Sollzins, ab dem sich das umdreht — er liegt nahe bei deiner Nettorendite von "
+    + nf2.format(netRate(G)) + " %, nicht bei der Bruttorendite. Das ist der Fehler, den die meisten Vergleiche machen.",
+    "Sofort bezahlen oder finanzieren?"));
 }
 
 /* ============================================================
@@ -3166,7 +3428,7 @@ function renderTable(results){
 function renderMethod(){
   document.getElementById("method").innerHTML = `
 <h3>Einfach und Detailliert</h3>
-<p>Der Schalter oben bestimmt, wie viele Felder du siehst — nicht, wie gerechnet wird. Im Modus <em>Einfach</em> zählen nur die sichtbaren Felder: Zeitraum, Fahrleistung, Benzin-, Diesel- und Haushaltsstrompreis, dazu je Fahrzeug Kraftstoffart, Bezahlung, Kaufpreis, Förderung, Restwert, Finanzierung, Garantie, Verbrauch, Versicherung, Kfz-Steuer, Service/Inspektion, HU, Reparaturen, Erstzulassung und Kilometerstand. Alles andere geht mit seinem Standardwert ein; E-Autos laden zu 100 % mit Haushaltsstrom, inklusive 12 % Ladeverlust. Die Preissteigerung ist dort fest: 3,0 % für Kraftstoff, 2,0 % für Strom, 2,5 % für alles Übrige.</p>
+<p>Der Schalter oben bestimmt, wie viele Felder du siehst — nicht, wie gerechnet wird. Im Modus <em>Einfach</em> zählen nur die sichtbaren Felder: Zeitraum, Fahrleistung, Benzin-, Diesel- und Haushaltsstrompreis, dazu je Fahrzeug Kraftstoffart, Bezahlung, Kaufpreis, Förderung, Restwert, Finanzierung, Garantie, Verbrauch, Versicherung, Kfz-Steuer, Service/Inspektion, HU, Reparaturen, Erstzulassung und Kilometerstand. Alles andere geht mit seinem Standardwert ein; E-Autos laden zu 100 % mit Haushaltsstrom, inklusive 12 % Ladeverlust, und bekommen 150 € THG-Prämie im Jahr. Die Preissteigerung ist dort fest: 3,0 % für Kraftstoff, 2,0 % für Strom, 2,5 % für alles Übrige.</p>
 <p>Was du im Modus <em>Detailliert</em> eingetragen hast — PV-Anlage, öffentliches Laden, Kapitalanlage, Reifen, Großreparaturen —, bleibt beim Umschalten gespeichert und gilt wieder, sobald du zurückschaltest.</p>
 
 <h3>Berechnen</h3>
@@ -3183,7 +3445,7 @@ function renderMethod(){
 <h3>Die Kapitalanlage als Gegenrechnung</h3>
 <p>Der Kalkulationszins ist nicht frei gegriffen, sondern die Rendite, die dein Geld sonst nach Steuern bringen würde — egal ob Tagesgeld, Fonds oder Anleihen:</p>
 <div class="formula">Nettorendite = Bruttorendite × (1 − Steuersatz)</div>
-<p>Wer das Geld ohnehin nicht anlegen würde, schaltet <em>Geld wird angelegt</em> aus. Dann wird mit 0 % abgezinst, der Barwert ist die schlichte Summe aller Zahlungen, und eine Finanzierung bringt keinen Zinsvorteil mehr.</p>
+<p>Wer das Geld ohnehin nicht anlegen würde, schaltet <em>Geld wird über den Betrachtungszeitraum angelegt</em> aus. Dann wird mit 0 % abgezinst, der Barwert ist die schlichte Summe aller Zahlungen, und eine Finanzierung bringt keinen Zinsvorteil mehr.</p>
 <p>Voreingestellt sind 5,0 % brutto und 18,5 % Steuer. Die 18,5 % kommen so zustande: 26,375 % Abgeltungsteuer plus Soli, davon bei einem Aktienfonds nur 70 % steuerpflichtig (30 % Teilfreistellung); für Tagesgeld gelten die vollen 26,375 %. Wer Kirchensteuer zahlt, liegt etwas höher; wer den Sparerpauschbetrag noch frei hat, niedriger. Die Vereinfachung: Die Steuer wird laufend abgezogen, tatsächlich fällt sie erst beim Verkauf an — über kurze Zeiträume ist der Unterschied klein, über zwanzig Jahre nicht mehr.</p>
 <p>Das Depot startet mit dem verfügbaren Kapital, jede Zahlung fürs Auto wird daraus entnommen, der Rest verzinst sich weiter. Am Ende gilt exakt:</p>
 <div class="formula">Endvermögen = (Kapital − Barwert) × (1 + Nettorendite)^N</div>
@@ -3202,7 +3464,7 @@ function renderMethod(){
 
 <h3>Energie</h3>
 <p>Verbrenner: <code>km/100 × Verbrauch × Preis</code>, jährlich mit der Kraftstoff-Teuerung fortgeschrieben.</p>
-<p>Elektro mit PV-Anlage: Den Unterpunkt <em>PV-Anlage vorhanden</em> hakst du in den Rahmendaten an, dann erscheinen Einspeisevergütung und Restlaufzeit, und je Fahrzeug der PV-Anteil. Ohne Haken zählt ein eingetragener PV-Anteil als Netzstrom daheim.</p>
+<p>Elektro mit PV-Anlage: Den Schalter <em>PV-Anlage vorhanden</em> legst du in den Rahmendaten um, dann erscheinen Einspeisevergütung und Restlaufzeit, und je Fahrzeug der PV-Anteil. Ist er aus, zählt ein eingetragener PV-Anteil als Netzstrom daheim.</p>
 <p>Elektro: Der Verbrauch ab Batterie wird um die Ladeverluste erhöht, dann mit einem Mischpreis aus vier Ladequellen bewertet:</p>
 <div class="formula">Ladepreis = (a_PV × Einspeisevergütung
            + a_Heim × Haushaltsstrompreis
@@ -3237,7 +3499,7 @@ Rate = (F − B) / L                                  bei 0 %</div>
 <p>Deshalb zwei zusätzliche Stellschrauben:</p>
 <ul>
 <li><strong>Verschleißkurve aus Alter und Laufleistung</strong> — der Normalfall. Aus Erstzulassung und Kilometerstand wird für jedes Jahr ein <em>effektives Alter</em> bestimmt: das Maximum aus Kalenderjahren und der Laufleistung geteilt durch eine normale Jahresfahrleistung. Ein Achtjähriger mit 240.000 km gilt damit als deutlich älter als einer mit 60.000 km. Auf dieses effektive Alter wird die Kurve angewendet; alternativ lässt sich ein fester Prozentsatz pro Jahr setzen.</li>
-<li><strong>Fahrleistung</strong> — die Hälfte der Reparaturen hängt an den Kilometern (Bremsen, Fahrwerk, Kupplung, Lager, Auspuff), die andere Hälfte an der Zeit (Gummi, Dichtungen, Korrosion, Elektronik, 12-V-Batterie). „Reparaturen Jahr 1“ gilt für durchschnittliche 13.000 km; der Faktor ist 0,5 + 0,5 × Fahrleistung / 13.000. Bei 5.000 km ergibt das 0,69, bei 17.000 km 1,15. Dazu kommt, dass viel Fahren das effektive Alter schneller wachsen lässt. Wenig Fahren bremst die Alterung dagegen nicht unter das Kalenderalter — ein Auto altert auch in der Garage. Service, Inspektion und HU sind zeitgebunden und hängen nicht an den Kilometern; wer mehr als 25.000–30.000 km im Jahr fährt, setzt das Inspektionsintervall auf 1 Jahr.</li>
+<li><strong>Fahrleistung</strong> — die Hälfte der Reparaturen hängt an den Kilometern (Bremsen, Fahrwerk, Kupplung, Lager, Auspuff), die andere Hälfte an der Zeit (Gummi, Dichtungen, Korrosion, Elektronik, 12-V-Batterie). „Reparaturen im 1. Jahr“ gilt für durchschnittliche 13.000 km; der Faktor ist 0,5 + 0,5 × Fahrleistung / 13.000. Bei 5.000 km ergibt das 0,69, bei 17.000 km 1,15. Dazu kommt, dass viel Fahren das effektive Alter schneller wachsen lässt. Wenig Fahren bremst die Alterung dagegen nicht unter das Kalenderalter — ein Auto altert auch in der Garage. Service, Inspektion und HU sind zeitgebunden und hängen nicht an den Kilometern; wer mehr als 25.000–30.000 km im Jahr fährt, setzt das Inspektionsintervall auf 1 Jahr.</li>
 <li><strong>Geplante Großreparaturen</strong> — Zahnriemen, Kupplung, Steuerkette, Partikelfilter: einzeln eintragbar mit Betrag und Jahr, damit sie an der richtigen Stelle im Zahlungsstrom landen statt in einer Durchschnittspauschale zu verschwinden. Die Vorlagenpreise sind grobe Richtwerte für einen Mittelklassewagen und ersetzen keinen Kostenvoranschlag. Posten, deren Jahr außerhalb des Betrachtungszeitraums liegt, werden nicht gerechnet — die Fahrzeugkarte weist darauf hin.</li>
 </ul>
 <p><strong>Woher die Kurve kommt — zwei Quellen, aneinandergesetzt bei neun Jahren.</strong> Für den jungen Bereich liefert der DAT-Report 2025 (Berichtsjahr 2024) durchschnittliche Verschleiß-Reparaturkosten nach drei Altersklassen: 61 € bis 3 Jahre, rund 137 € von 3 bis 6, 226 € ab 6 Jahren, angesetzt auf den Klassenmitten 1,5 / 4,5 / 9 Jahre.</p>
@@ -3247,7 +3509,7 @@ Rate = (F − B) / L                                  bei 0 %</div>
 <p>Zwei Vorbehalte bleiben: Der DAT-Report lässt offen, ob sich seine Beträge auf eine einzelne Reparatur oder auf Fahrzeug und Jahr beziehen, und die TÜV-Zahlen messen Mängel, nicht Euro. Für die Form der Kurve ist beides tragbar, für eine absolute Aussage nicht — deshalb liefert die Kurve nur das Verhältnis zum ersten Jahr, und das Niveau bleibt deine eigene Schätzung.</p>
 <h3>Warum die Kurve beim E-Auto gedämpft wirkt</h3>
 <p>Die Datenbasis kommt aus einer Flotte, die fast vollständig aus Verbrennern besteht — und die Posten, die den Anstieg tragen, hat ein E-Auto gar nicht: Ölwechsel, Zündkerzen, Zahnriemen, Abgasanlage und Partikelfilter, Kupplung, Einspritzung. Die volle Kurve auf ein E-Auto anzuwenden würde dessen Alterung überzeichnen.</p>
-<p>Deshalb wirkt die Kurve je nach Kraftstoffart unterschiedlich stark, und zwar automatisch: voll beim Benziner und Diesel, mit 60 % beim E-Auto. Der Anstieg wird entsprechend abgeschwächt, das Niveau bleibt unberührt — das kommt weiter aus deinem Betrag für Jahr 1.</p>
+<p>Deshalb wirkt die Kurve je nach Kraftstoffart unterschiedlich stark: voreingestellt voll beim Benziner und Diesel, mit 60 % beim E-Auto. Im Modus <em>Detailliert</em> stellst du die <em>Wirkung der Kurve</em> je Fahrzeug selbst ein — 0 % heißt kein Anstieg über die Teuerung hinaus, 100 % der volle Anstieg; im Modus <em>Einfach</em> gilt die Voreinstellung. Der Anstieg wird entsprechend abgeschwächt, das Niveau bleibt unberührt — das kommt weiter aus deinem Betrag fürs erste Jahr.</p>
 <p>Diese 60 % sind eine begründete Annahme, keine Messung — und das ist wichtig zu wissen. Der TÜV-Report 2026 wertet zwar 9,5 Millionen Hauptuntersuchungen aus, darunter 18 reine Elektromodelle, veröffentlicht aber keine aggregierte Mängelquote „E-Autos gegen Verbrenner“. Belastbare Werte gibt es faktisch nur für die Altersklasse 2 bis 3 Jahre, weil der elektrische Gebrauchtbestand schlicht noch zu jung ist. Dort liegen Mini Cooper SE (3,5 %), Audi Q4 e-tron (4,0 %) und Fiat 500e (4,2 %) deutlich besser als der Klassenschnitt, Tesla Model 3 (13,1 %) und Model Y (17,3 %) dagegen am Ende des gesamten Feldes — wobei beide Teslas nach zwei bis drei Jahren bereits über 50.000 km gelaufen waren, also etwa doppelt so viel wie die Vergleichsmodelle.</p>
 <p>Auch die Mängelarten verschieben sich statt zu verschwinden. Der TÜV nennt beim E-Auto Achsaufhängungen, die unter dem Batteriegewicht leiden, Bremsscheiben, die korrodieren weil die Reibbremse durch Rekuperation selten arbeitet, und Beleuchtung. Die volle Kurve wäre beim E-Auto deshalb nicht unsinnig, nur konservativ; die 60 % liegen zwischen „nichts ändert sich“ und „alle Verschleißteile entfallen“.</p>
 
@@ -3305,9 +3567,9 @@ Rate = (F − B) / L                                  bei 0 %</div>
 <li><strong>Einspeisevergütung 32 ct/kWh, noch 5 Jahre</strong> — eingestellt auf eine Anlage mit Inbetriebnahme 2011. Die Vergütung läuft 20 volle Kalenderjahre plus das Inbetriebnahmejahr, endet also zum 31.12.2031. Danach greift die Anschlussregelung zum Jahresmarktwert Solar (2025: 4,51 ct/kWh, abzüglich Vermarktungskosten), gültig bis Ende 2032. Für <em>Neuanlagen</em> gelten dagegen 7,70 ct/kWh Überschusseinspeisung bis 10 kWp (Inbetriebnahme 01.08.2026 bis 31.01.2027) — wer eine neue Anlage rechnet, trägt diesen Wert ein und setzt die Restlaufzeit auf 20.</li>
 <li><strong>Schnellladen 0,59 €/kWh, AC 0,49 €/kWh</strong> — unter 50 ct gibt es unterwegs laut ADAC selten Strom; ad hoc ohne Vertrag bis zu 62 % teurer.</li>
 <li><strong>Kfz-Steuer Elektro 0 €</strong> — reine E-Autos mit Erstzulassung bis 31.12.2030 sind bis Ende 2035 befreit, maximal zehn Jahre ab Erstzulassung. Danach ermäßigt sich die Steuer um 50 %.</li>
-<li><strong>THG-Prämie 100 €/Jahr</strong> — die Treibhausgasminderungsquote. Jedes reine E-Auto erzeugt ein Zertifikat, das einmal jährlich über einen Vermarkter verkauft wird, Frist ist der 15. November; Plug-in-Hybride sind ausgeschlossen. Der Preis folgt dem Quotenmarkt und ist seit der Einführung stark gefallen: 2022 noch 250 bis 400 €, 2023 etwa 200 bis 300 €, 2024 rund 100 €, 2025 zwischen 70 und 100 €. Für 2026 nennen Anbieter 100 bis 180 €; die EU-Richtlinie RED III könnte den Satz wieder anheben, der maßgebliche Umrechnungsfaktor je Fahrzeug stand bei Erstellung dieses Tools aber noch aus. Im Modell mindert die Prämie den Energieblock, weil sie wirtschaftlich ein Rabatt auf den gefahrenen Kilometer ist: bei 2.800 kWh im Jahr entspricht sie rund 3,6 ct/kWh.</li>
+<li><strong>THG-Prämie 150 €/Jahr</strong> — die Treibhausgasminderungsquote. Jedes reine E-Auto erzeugt ein Zertifikat, das einmal jährlich über einen Vermarkter verkauft wird, Frist ist der 15. November; Plug-in-Hybride sind ausgeschlossen. Der Preis folgt dem Quotenmarkt und ist seit der Einführung stark gefallen: 2022 noch 250 bis 400 €, 2023 etwa 200 bis 300 €, 2024 rund 100 €, 2025 zwischen 70 und 100 €. Für 2026 nennen Anbieter 100 bis 180 €; die EU-Richtlinie RED III könnte den Satz wieder anheben, der maßgebliche Umrechnungsfaktor je Fahrzeug stand bei Erstellung dieses Tools aber noch aus. Im Modell mindert die Prämie den Energieblock, weil sie wirtschaftlich ein Rabatt auf den gefahrenen Kilometer ist: bei 2.800 kWh im Jahr entspricht sie rund 5,4 ct/kWh.</li>
 <li><strong>Ladeverluste 12 %</strong> — typisch für Wechselstromladen an der Wallbox; am Schnelllader geringer, an der Schuko-Steckdose höher.</li>
-<li><strong>Restwerte</strong> — voreingestellt 42 % für das E-Auto und 45 % für den Verbrenner nach fünf Jahren. Belastbar ist die Datenlage nicht: Die einzige dokumentierte Institutsprognose stammt von Bähr &amp; Fess (August 2025, mit Focus Online) und nennt für ein Tesla Model Y Standardreichweite 55,2 % nach <em>vier</em> Jahren zum Händlerverkaufspreis. Für fünf Jahre kursieren 41 bis 50 %. Portalauswertungen sehen das Model 3 nach 36 Monaten bei 40 bis 46 % Verlust und damit 5 bis 10 Prozentpunkte schlechter als einen vergleichbaren Verbrenner. Ob sich der Verfall stabilisiert hat, ist unter den Quellen umstritten — für den Gesamtmarkt ja, für das Model 3 mit zuletzt −14 % im Jahresvergleich eher nicht. Prüfe den Wert für dein Modell selbst; er ist der größte Hebel der ganzen Rechnung.</li>
+<li><strong>Restwert 38 %</strong> — voreingestellt für jedes neu angelegte Fahrzeug, nach fünf Jahren. Belastbar ist die Datenlage nicht: Die einzige dokumentierte Institutsprognose stammt von Bähr &amp; Fess (August 2025, mit Focus Online) und nennt für ein Tesla Model Y Standardreichweite 55,2 % nach <em>vier</em> Jahren zum Händlerverkaufspreis. Für fünf Jahre kursieren 41 bis 50 %. Portalauswertungen sehen das Model 3 nach 36 Monaten bei 40 bis 46 % Verlust und damit 5 bis 10 Prozentpunkte schlechter als einen vergleichbaren Verbrenner. Ob sich der Verfall stabilisiert hat, ist unter den Quellen umstritten — für den Gesamtmarkt ja, für das Model 3 mit zuletzt −14 % im Jahresvergleich eher nicht. Prüfe den Wert für dein Modell selbst; er ist der größte Hebel der ganzen Rechnung.</li>
 <li><strong>Inspektionskosten</strong> — ADAC-Erhebung Januar 2026: 94 Kostenvoranschläge bei BMW, Dacia, Hyundai, Mercedes und VW in Hamburg, Köln und München. E-Autos rund ein Drittel günstiger als der vergleichbare Verbrenner; BMW i4 527 € gegen M440i 1.054 € in Hamburg. Ausnahme Dacia: dort war der Verbrenner 43 % günstiger. Zu den Intervallen der einzelnen Hersteller gibt es keine belastbare öffentliche Übersicht — VW nennt für die ID-Reihe zwei Jahre, BMW beschreibt die Wartung als bedarfsorientiert, für Mercedes und Hyundai fand ich gar keine Angabe. Im Zweifel steht das Intervall im Serviceheft.</li>
 <li><strong>Verschleißkurve 61 / 137 / 226 €</strong> — DAT-Report 2025, Verschleiß-Reparaturkosten nach Fahrzeugalter (bis 3 / 3–6 / ab 6 Jahre). Bezugsgröße der Kurve: 13.000 km normale Jahresfahrleistung, im Feld anpassbar.</li>
 </ul>
@@ -3396,7 +3658,7 @@ function buildPdf(){
   const E = v => nf0.format(Math.round(v));
 
   /* ---------- Deckblatt ---------- */
-  h1("Auto-Finanz-Rechner — Prüfbericht");
+  h1("Autokosten-Rechner — Prüfbericht");
   doc.setFont("helvetica","normal").setFontSize(9).setTextColor(...mut);
   doc.text("Erstellt am " + datum + "  ·  Alle Beträge in Euro  ·  " +
            (MODE==="pv" ? "Rangfolge nach Barwert" : "Rangfolge nach Nominalsumme") + "  ·  Modus " + (DETAIL ? "Detailliert" : "Einfach"), M, y);
@@ -3420,7 +3682,7 @@ function buildPdf(){
   const gz = [
     ["Betrachtungszeitraum", nf0.format(N)+" Jahre"],
     ["Fahrleistung", nf0.format(GE.km)+" km/Jahr"],
-    ["Geld wird angelegt", GE.anlage ? "ja" : "nein (Abzinsung mit 0 %)"],
+    ["Geld wird über den Zeitraum angelegt", GE.anlage ? "ja" : "nein (Abzinsung mit 0 %)"],
     ["Rendite vor Steuern", GE.anlage ? nf1.format(GE.etfBrutto)+" % p.a." : "—"],
     ["Steuer auf Kapitalerträge", GE.anlage ? nf2.format(GE.kest)+" %" : "—"],
     ["Kalkulationszins (netto)", nf2.format(netRate(GE))+" % p.a."],
@@ -3465,11 +3727,11 @@ function buildPdf(){
       ["Versicherung", E(v.versicherung)+" /Jahr"],
       ["Kfz-Steuer", E(v.steuer)+" /Jahr"],
       ["Service/Inspektion", E(v.service)+" /Jahr"],
-      ["Reparaturen Jahr 1", E(v.reparatur)+" /Jahr"],
+      ["Reparaturen im 1. Jahr", E(v.reparatur)+" /Jahr"],
       ["Reifen", E(v.reifenPreis)+" je Satz, alle "+(v.reifenModus==="jahre" ? fmtDe(v.reifenJahre,1)+" Jahre" : nf0.format(v.reifenKm)+" km")],
       ["HU/AU", E(v.hu)+", 3 Jahre nach Erstzulassung, dann alle 2 Jahre"],
       ["Erstzulassung / km-Stand", String(Math.round(v.baujahr))+" / "+nf0.format(v.kmStand)+" km"],
-      ["Wirkung der Verschleisskurve", nf0.format(kurveWirkung(v)*100)+" % ("+(v.art==="elektro" ? "E-Auto, gedämpft" : "Verbrenner, voll")+")"]
+      ["Wirkung der Verschleisskurve", nf0.format(kurveWirkung(v)*100)+" % (voreingestellt "+nf0.format(stdWertArt(v.art,"kurveWirkung"))+" % "+(v.art==="elektro" ? "beim E-Auto" : "beim Verbrenner")+")"]
     ];
     if(v.art==="elektro"){
       ein.push(["Ladeverluste", nf0.format(v.ladeverlust)+" %"+(v.abBatterie?" (Verbrauch ab Batterie)":" (nicht angewendet)")]);
@@ -3549,8 +3811,8 @@ function buildPdf(){
       for(let t=1;t<=N;t++) rows.push([String(t), nf1.format(effAlter(v,GE,t)), nf2.format(repFaktor(v,GE,t)),
                                        nf0.format(garantieAnteil(v,t,GE.km)*100)+" %",
                                        E(v.reparatur*repFaktor(v,GE,t)*repKmFaktor(GE.km)*Math.pow(1+GE.iGen/100,t-1)*garantieAnteil(v,t,GE.km))]);
-      para("Fahrleistungsfaktor: Die Hälfte der Reparaturen hängt an den Kilometern, die andere Hälfte an der Zeit. \"Reparaturen Jahr 1\" gilt für " + nf0.format(KM_NORMAL) + " km/Jahr; bei " + nf0.format(GE.km) + " km: 0,5 + 0,5 x " + nf0.format(GE.km) + " / " + nf0.format(KM_NORMAL) + " = " + nf2.format(repKmFaktor(GE.km)) + ". Dieser Faktor steckt in der Spalte Reparaturen.");
-      para("Die Reparaturruecklage folgt der Verschleisskurve. Effektives Alter = Maximum aus Kalenderjahren und Laufleistung geteilt durch " + nf0.format(KM_NORMAL) + " km. Bis 9 Jahre stuetzt sich die Kurve auf die Kostenklassen des DAT-Reports 2025 (1,5 J. = 61 EUR, 4,5 J. = 137 EUR, 9 J. = 226 EUR), darueber auf die Quoten erheblicher Maengel des TUEV-Reports 2026, bei 9 Jahren stetig angesetzt: 10,5 J. = 266, 12,5 J. = 330, 14,5 J. = 382, 16,5 J. = 421, 18,5 J. = 450, 20,5 J. = 468. Dazwischen wird linear interpoliert. Der Faktor ist auf Jahr 1 normiert und mit der Wirkung von " + nf0.format(kurveWirkung(v)*100) + " % angesetzt (Verbrenner 100 %, E-Auto " + nf0.format(KURVE_EV*100) + " %); das Niveau kommt aus der Eingabe. Vorbehalt: Der DAT-Report weist nicht eindeutig aus, ob seine Betraege je Reparatur oder je Fahrzeug und Jahr gelten; die TUEV-Quoten messen Maengel, nicht Euro. Fuer die Form der Kurve ist beides tragbar, fuer eine absolute Aussage nicht.");
+      para("Fahrleistungsfaktor: Die Hälfte der Reparaturen hängt an den Kilometern, die andere Hälfte an der Zeit. \"Reparaturen im 1. Jahr\" gilt für " + nf0.format(KM_NORMAL) + " km/Jahr; bei " + nf0.format(GE.km) + " km: 0,5 + 0,5 x " + nf0.format(GE.km) + " / " + nf0.format(KM_NORMAL) + " = " + nf2.format(repKmFaktor(GE.km)) + ". Dieser Faktor steckt in der Spalte Reparaturen.");
+      para("Die Reparaturruecklage folgt der Verschleisskurve. Effektives Alter = Maximum aus Kalenderjahren und Laufleistung geteilt durch " + nf0.format(KM_NORMAL) + " km. Bis 9 Jahre stuetzt sich die Kurve auf die Kostenklassen des DAT-Reports 2025 (1,5 J. = 61 EUR, 4,5 J. = 137 EUR, 9 J. = 226 EUR), darueber auf die Quoten erheblicher Maengel des TUEV-Reports 2026, bei 9 Jahren stetig angesetzt: 10,5 J. = 266, 12,5 J. = 330, 14,5 J. = 382, 16,5 J. = 421, 18,5 J. = 450, 20,5 J. = 468. Dazwischen wird linear interpoliert. Der Faktor ist auf Jahr 1 normiert und mit der Wirkung von " + nf0.format(kurveWirkung(v)*100) + " % angesetzt (voreingestellt: Verbrenner 100 %, E-Auto " + nf0.format(KURVE_EV*100) + " %); das Niveau kommt aus der Eingabe. Vorbehalt: Der DAT-Report weist nicht eindeutig aus, ob seine Betraege je Reparatur oder je Fahrzeug und Jahr gelten; die TUEV-Quoten messen Maengel, nicht Euro. Fuer die Form der Kurve ist beides tragbar, fuer eine absolute Aussage nicht.");
       tbl(["Jahr","Effektives Alter","Faktor","Selbst getragen","Reparaturen"], rows,
           {columnStyles:{0:{cellWidth:14,halign:"center"},1:{halign:"right"},2:{halign:"right"},3:{halign:"right"},4:{halign:"right"}}, tableWidth: 135});
     } else {
@@ -3656,7 +3918,7 @@ function buildPdf(){
     ["Anschlussvergütung nach 20 Jahren","4,51 ct/kWh","Jahresmarktwert Solar 2025"],
     ["Schnellladen / AC","0,59 / 0,49 €/kWh","ADAC: unter 50 ct unterwegs selten"],
     ["Kfz-Steuer Elektro","0 €","Erstzulassung bis 31.12.2030 befreit bis Ende 2035, max. 10 Jahre"],
-    ["THG-Prämie","100 €/Jahr","marktabhängig, zuletzt rund 60 bis 300 €"],
+    ["THG-Prämie","150 €/Jahr","marktabhängig, für 2026 nennen Anbieter 100 bis 180 €"],
     ["Inspektion E-Auto vs. Verbrenner","rund ein Drittel","ADAC-Erhebung 01/2026, 94 Kostenvoranschläge"],
     ["Verschleißkurve bis 9 J.","61 / 137 / 226 €","DAT-Report 2025, Verschleißreparaturen nach Altersklasse"],
     ["Verschleißkurve ab 9 J.","18,3 % bis 40,3 %","TÜV-Report 2026, erhebliche Mängel nach Altersklasse"],
@@ -3671,7 +3933,7 @@ function buildPdf(){
     doc.setPage(p);
     doc.setDrawColor(...line).setLineWidth(0.2).line(M, PH-12, PW-M, PH-12);
     doc.setFont("helvetica","normal").setFontSize(7).setTextColor(...mut);
-    doc.text("Auto-Finanz-Rechner · Prüfbericht vom " + datum, M, PH-8);
+    doc.text("Autokosten-Rechner · Prüfbericht vom " + datum, M, PH-8);
     doc.text("Seite " + p + " von " + n, PW-M, PH-8, {align:"right"});
   }
   return doc;
@@ -3705,7 +3967,7 @@ async function exportPdf(btn){
     if(!ERG) throw new Error("Erst auf „Berechnen“ klicken");
     const doc = mitStand(ERG.snap, buildPdf);     // der Bericht zeigt genau das berechnete Ergebnis
     const bytes = new Uint8Array(doc.output("arraybuffer"));
-    const name = "Auto-Finanz-Rechner-Pruefbericht-" + new Date().toISOString().slice(0,10) + ".pdf";
+    const name = "Autokosten-Rechner-Pruefbericht-" + new Date().toISOString().slice(0,10) + ".pdf";
     schritt = "Speichern";
     let dl = null;
     try { dl = (window.claude && typeof window.claude.use === "function") ? await window.claude.use("downloads") : null; }
@@ -3786,12 +4048,16 @@ function zeichneErgebnis(){
 function zeichneFin(){ if(ERG) mitStand(ERG.snap, renderFin); }
 
 function zeigeZustand(){
+  const keins = !vehicles.length;
   const leer = document.getElementById("rank-leer");
   leer.hidden = !!ERG && !LAEDT;
   leer.querySelector("button").hidden = LAEDT;
   document.getElementById("rank-leer-text").innerHTML = LAEDT
     ? "Wird berechnet …"
+    : keins ? "Noch kein Fahrzeug angelegt. Leg unter <strong>Fahrzeuge</strong> das erste an — dann kannst du berechnen."
     : "Noch nicht berechnet. Trag Rahmendaten und Fahrzeuge ein und klick dann auf <strong>Berechnen</strong>.";
+  // Auf dem Handy steht die Spalte unter den Eingaben — ohne Ergebnis wäre sie nur ein leerer Kasten
+  document.getElementById("rail").classList.toggle("ohne-erg", !ERG && !LAEDT);
   document.getElementById("rank").hidden = !ERG || LAEDT;
   document.getElementById("rank-hint").hidden = !ERG || LAEDT;
   document.getElementById("rank-veraltet").hidden = !(ERG && VERALTET && !LAEDT);
@@ -3803,12 +4069,16 @@ function zeigeZustand(){
   if(!ERG) document.getElementById("rank-note").textContent = "";
 
   const haupt = document.getElementById("berechnen-btn");
-  document.querySelectorAll("[data-berechnen]").forEach(b => { b.disabled = LAEDT; });
+  document.querySelectorAll("[data-berechnen]").forEach(b => { b.disabled = LAEDT || keins; });
   haupt.textContent = LAEDT ? "Wird berechnet …" : !ERG ? "Berechnen" : VERALTET ? "Neu berechnen" : "Zum Ergebnis ↓";
-  document.getElementById("berechnen-hint").textContent = !ERG
-    ? "Alle Fahrzeuge eingetragen? Dann rechnet der Rechner sie durch und zeigt Rangfolge und Diagramme."
-    : VERALTET ? "Du hast seit dem letzten Berechnen etwas geändert."
-               : "Das Ergebnis passt zu deinen Eingaben. Änderst du etwas, rechnest du einfach neu.";
+  document.getElementById("berechnen-hint").textContent = keins
+    ? "Leg zuerst mindestens ein Fahrzeug an."
+    : !ERG
+    ? (!DETAIL ? "Zeigt Rangfolge und Diagramme."
+       : vehicles.length === 1 ? "Ein Fahrzeug lässt sich schon durchrechnen — den Vergleich gibt es ab zwei."
+       : "Alle Fahrzeuge eingetragen? Dann rechnet der Rechner sie durch und zeigt Rangfolge und Diagramme.")
+    : VERALTET ? (DETAIL ? "Du hast seit dem letzten Berechnen etwas geändert." : "Eingaben geändert.")
+               : (DETAIL ? "Das Ergebnis passt zu deinen Eingaben. Änderst du etwas, rechnest du einfach neu." : "Das Ergebnis ist aktuell.");
 
   // Gesamtkosten im Kopf der Fahrzeugkarten
   const erg = ergebnisFrisch();
@@ -3822,7 +4092,7 @@ function zeigeZustand(){
 }
 
 function berechnen(){
-  if(LAEDT) return;
+  if(LAEDT || !vehicles.length) return;
   if(ERG && !VERALTET){
     document.getElementById("ergebnis").scrollIntoView({behavior:"smooth", block:"start"});
     return;
@@ -3892,6 +4162,8 @@ function renderResultsOnly(){
     if(bh) besitzText(bh, v);
     const pl = document.getElementById("v"+i+"-plan");
     if(pl){ pl.textContent = ""; pl.append(wartungsplan(v)); }
+    const ri = document.getElementById("v"+i+"-repinfo");
+    if(ri) repInfo(ri, v);
   });
   eingabeGeaendert();
   autosave();
@@ -3912,8 +4184,12 @@ function zeigeModus(){
   document.getElementById("ms-detail").setAttribute("aria-current", String(DETAIL));
   document.getElementById("modus-hint").innerHTML = DETAIL
     ? "<strong>Detailliert:</strong> alle Felder, inklusive PV-Anlage, öffentlichem Laden, Kapitalanlage, Preissteigerung, Reifen, Verschleißkurve und geplanten Großreparaturen."
-    : "<strong>Einfach:</strong> nur die wichtigsten Felder. Alles Ausgeblendete rechnet mit Standardwerten, E-Autos laden mit Haushaltsstrom. "
-      + "Was du im Modus Detailliert eingetragen hast, bleibt gespeichert und gilt wieder, sobald du zurückschaltest.";
+    : "<strong>Einfach:</strong> nur die wichtigsten Felder, der Rest rechnet mit Standardwerten.";
+  // Feste Texte mit Kurzfassung (data-kurz): im Modus Einfach die kurze, sonst die ausführliche
+  document.querySelectorAll("[data-kurz]").forEach(el => {
+    if(el.dataset.lang === undefined) el.dataset.lang = el.innerHTML;
+    el.innerHTML = DETAIL ? el.dataset.lang : el.dataset.kurz;
+  });
 }
 function setzeModus(detail){
   if(DETAIL === !!detail) return;
@@ -3928,13 +4204,33 @@ document.getElementById("detail-switch").addEventListener("click", ()=> setzeMod
 document.getElementById("ms-einfach").addEventListener("click", ()=> setzeModus(false));
 document.getElementById("ms-detail").addEventListener("click", ()=> setzeModus(true));
 
-document.getElementById("add-v").addEventListener("click", ()=>{
-  if(vehicles.length >= MAX_FZG) return;
-  vehicles.push(mkVehicle({name:"Fahrzeug "+(vehicles.length+1)}));
+/* Kachel „Fahrzeug hinzufügen“: Text und Gewicht je nach Anzahl der Fahrzeuge */
+function zeigeNeuFzg(){
+  const box = document.getElementById("neufzg");
+  const n = vehicles.length, frei = MAX_FZG - n;
+  box.classList.toggle("is-leer", n === 0);
+  box.classList.toggle("is-eins", n === 1);
+  document.getElementById("nf-titel").textContent =
+    n === 0 ? "Noch kein Fahrzeug angelegt" : n === 1 ? "Zweites Fahrzeug zum Vergleich" : "Weiteres Fahrzeug hinzufügen";
+  document.getElementById("nf-sub").textContent =
+      n === 0 ? (DETAIL ? "Leg das erste Fahrzeug an, das du durchrechnen willst — wähl dazu den Antrieb. Für einen Vergleich brauchst du mindestens zwei, bis zu acht sind möglich."
+                        : "Wähl den Antrieb. Für einen Vergleich brauchst du mindestens zwei Fahrzeuge.")
+    : n === 1 ? (DETAIL ? "Erst mit einem zweiten Fahrzeug siehst du, welches günstiger ist — etwa ein Verbrenner gegen ein E-Auto."
+                        : "Erst mit zwei Fahrzeugen siehst du, welches günstiger ist.")
+    : frei > 0 ? "Noch " + frei + " von " + MAX_FZG + " Plätzen frei."
+    : "Alle acht Plätze sind belegt. Für weitere Varianten speicherst du am besten ein Szenario.";
+  box.querySelectorAll("[data-neu]").forEach(b => {
+    b.disabled = frei <= 0;
+    b.classList.toggle("primary", n === 0);
+  });
+}
+document.getElementById("neufzg").addEventListener("click", ev => {
+  const b = ev.target.closest && ev.target.closest("[data-neu]");
+  if(!b || !neuesFahrzeug(b.dataset.neu)) return;
   render();
   const karten = document.getElementById("vehicles").children;
   const letzte = karten[karten.length-1];
-  if(letzte) letzte.scrollIntoView({block:"center", behavior:"smooth"});
+  if(letzte) letzte.scrollIntoView({block:"start", behavior:"smooth"});
 });
 document.getElementById("reset-all").addEventListener("click", ()=>{
   Object.assign(G, GDEF);
@@ -3950,7 +4246,7 @@ const LS_AUTO = "autokosten:auto", LS_SZEN = "autokosten:szenarien";
 const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } };
 const lsSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } };
 
-function snapshot(){ return {ver:4, G:Object.assign({},G), vehicles:vehicles.map(v=>Object.assign({},v)), detail:DETAIL}; }
+function snapshot(){ return {ver:5, G:Object.assign({},G), vehicles:vehicles.map(v=>Object.assign({},v)), detail:DETAIL}; }
 
 /* Ältere Stände einlesen, ohne dass sich Beträge still verändern. */
 function migriere(v){
@@ -3958,9 +4254,12 @@ function migriere(v){
   /* Die große Inspektion war ein eigenes Feld mit Intervall. Heute gibt es nur
      noch einen Jahresbetrag — die Inspektion wird auf die Jahre umgelegt.      */
   if(o.serviceGross > 0 && o.serviceInt > 0) o.service = Math.round((o.service||0) + o.serviceGross/o.serviceInt);
-  // Gestrichene Felder: HU erstmals (jetzt aus der Erstzulassung), Anschlussgarantie,
-  // Sonstiges und die Wirkung der Verschleißkurve (jetzt automatisch nach Kraftstoffart)
-  ["serviceGross","serviceInt","serviceErst","huErst","garantie","sonstige","kurveWirkung"].forEach(k => delete o[k]);
+  // Gestrichene Felder: HU erstmals (jetzt aus der Erstzulassung), Anschlussgarantie
+  // und Sonstiges
+  ["serviceGross","serviceInt","serviceErst","huErst","garantie","sonstige"].forEach(k => delete o[k]);
+  // Die Wirkung der Kurve war zeitweise automatisch — solche Stände bekommen die Voreinstellung ihres Antriebs,
+  // damit das Ergebnis gleich bleibt
+  if(o.kurveWirkung === undefined) o.kurveWirkung = stdWertArt(o.art || VDEF.art, "kurveWirkung");
   /* Früher zwei getrennte Arten — "Rate berechnen lassen" und "Rate aus Angebot".
      Heute eine Finanzierung mit Schalter; die Angebotswerte ziehen um.          */
   if(o.fin === "ratenkauf"){
@@ -3986,7 +4285,7 @@ function migriere(v){
   return o;
 }
 function restore(s){
-  if(!s || !s.vehicles || !s.vehicles.length) return false;
+  if(!s || !Array.isArray(s.vehicles)) return false;      // eine leere Liste ist ein gültiger Stand
   Object.assign(G, GDEF, s.G||{});
   // Ältere Stände rechneten den PV-Anteil immer mit Einspeisevergütung → PV-Anlage war vorhanden
   if(s.G && s.G.pv === undefined) G.pv = 1;
@@ -4049,9 +4348,9 @@ document.getElementById("szen-del").addEventListener("click", ()=>{
   lsSet(LS_SZEN, alle); szenRefresh(); status("„"+n+"“ gelöscht");
 });
 document.getElementById("szen-exp").addEventListener("click", async ()=>{
-  const data = JSON.stringify({tool:"auto-finanz-rechner", ver:1, stand:new Date().toISOString(),
+  const data = JSON.stringify({tool:"autokosten-rechner", ver:1, stand:new Date().toISOString(),
                                aktuell:snapshot(), szenarien:szenListe()}, null, 2);
-  const name = "Auto-Finanz-Rechner-Eingaben-" + new Date().toISOString().slice(0,10) + ".json";
+  const name = "Autokosten-Rechner-Eingaben-" + new Date().toISOString().slice(0,10) + ".json";
   try{
     let dl = null;
     try { dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch(e){}
@@ -4091,6 +4390,10 @@ document.getElementById("modus-info").append(infoBtn(
   + "(Standard 5 % vor Steuern, nach 18,5 % Steuer rund 4,1 %; im Modus Detailliert änderbar oder abschaltbar, wenn du das Geld nicht anlegst). "
   + "Ohne Abzinsung sähe der Barkauf immer günstiger aus als eine Finanzierung, auch bei 0 % Zins, und ein Restwert in fünf Jahren zählte so viel wie Bargeld heute. "
   + "Der reine Wertverlust in Euro steht trotzdem unter jedem Restwertfeld, die Wartungstabellen zeigen die tatsächlichen Rechnungsbeträge.", "Warum Barwerte?"));
+document.getElementById("etf-info").append(infoBtn(
+  "Nicht nur wie viel ein Auto kostet, sondern wann. Jede geleistete Zahlung wird bis zum jeweiligen Jahr aufgezinst — was früh abfließt, wiegt schwerer. "
+  + "Der Knick am Ende ist der Restwert. Der senkrechte Abstand zwischen zwei Linien ist der Vorsprung des einen Fahrzeugs vor dem anderen, zu diesem Zeitpunkt.",
+  "Wann das Geld abfließt"));
 document.getElementById("szen-info").append(infoBtn(
   "Der aktuelle Stand wird automatisch im Browser dieses Geräts gesichert und beim nächsten Öffnen wiederhergestellt. "
   + "Darüber hinaus kannst du beliebig viele benannte Stände anlegen und zwischen ihnen wechseln. "
@@ -4244,7 +4547,26 @@ window.__selftest = function(){
   // 13) Migration: große Inspektion wird auf die Jahre umgelegt
   const altS = migriere({service:100, serviceGross:800, serviceInt:2, huErst:3, garantie:300, sonstige:50, kurveWirkung:60});
   t.push(["Migration Service umgelegt", altS.service, 500]);
-  t.push(["Migration alte Felder entfernt", ["serviceGross","huErst","garantie","sonstige","kurveWirkung"].some(k=>k in altS) ? 1 : 0, 0]);
+  t.push(["Migration alte Felder entfernt", ["serviceGross","huErst","garantie","sonstige"].some(k=>k in altS) ? 1 : 0, 0]);
+  t.push(["Migration: alte Kurvenwirkung bleibt", altS.kurveWirkung, 60]);
+  t.push(["Migration: E-Auto ohne Wert bekommt 60 %", migriere({art:"elektro"}).kurveWirkung, 60]);
+  // 13b) Wirkung der Kurve: 0 % = flach, 100 % = volle Kurve, E-Auto im Modus Einfach 60 %
+  const vW = mkVehicle({art:"benzin", baujahr:new Date().getFullYear()-6, kmStand:80000});
+  const roh5 = verschleissIndex(effAlter(vW, g, 5))/verschleissIndex(effAlter(vW, g, 1));
+  t.push(["Kurve 0 %: kein Anstieg", repFaktor(mkVehicle(Object.assign({}, vW, {kurveWirkung:0})), g, 5), 1]);
+  t.push(["Kurve 100 %: voller Anstieg", repFaktor(vW, g, 5), roh5]);
+  t.push(["Kurve 50 %: halber Anstieg", repFaktor(mkVehicle(Object.assign({}, vW, {kurveWirkung:50})), g, 5), 1 + (roh5-1)*0.5]);
+  DETAIL = false;
+  t.push(["Einfach: E-Auto mit 60 %", kurveWirkung(effV(mkVehicle({art:"elektro", kurveWirkung:100}))), 0.6]);
+  DETAIL = true;
+  // 14) Kraftstoffart wechseln: Standardwerte ziehen mit, eigene Eingaben bleiben
+  const vS = mkVehicle({}); setzeArt(vS, "elektro");
+  t.push(["Neues E-Auto: 17 kWh, 0 € Steuer, 4/8 J. Garantie", [vS.verbrauch, vS.steuer, vS.garFzg, vS.garAntrieb].join("/") === "17/0/4/8" ? 1 : 0, 1]);
+  setzeArt(vS, "diesel");
+  t.push(["Zurück auf Diesel: 6,5 l, 200 € Steuer, ohne Garantie", [vS.verbrauch, vS.steuer, vS.garFzg, vS.garAntrieb].join("/") === "6.5/200/0/0" ? 1 : 0, 1]);
+  const vE = mkVehicle({}); setzeArt(vE, "elektro"); vE.steuer = 120; setzeArt(vE, "benzin");
+  t.push(["Eigene Steuer bleibt beim Wechsel", vE.steuer, 120]);
+  t.push(["THG-Prämie Standard", VDEF.thg, 150]);
   MODE = prev; DETAIL = prevD;
   console.table(t.map(([n,got,exp])=>({Test:n, Ist:Math.round(got*100)/100, Soll:Math.round(exp*100)/100,
     OK: Math.abs(got-exp) < Math.max(0.05, Math.abs(exp)*1e-6) ? "PASS":"FAIL"})));
