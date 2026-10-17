@@ -768,6 +768,13 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
 .artseg button:first-child{border-left:0}
 .artseg button[aria-pressed="true"]{background:var(--accent);color:#fff}
 .artseg button:not([aria-pressed="true"]):hover{background:var(--surface-3);color:var(--ink)}
+/* Sechs Antriebe: auf schmalen Bildschirmen als Raster mit drei Spalten */
+@media (max-width:700px){
+  .artseg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+  .artseg button{padding:9px 4px;font-size:13px;line-height:1.25;border-left:1px solid var(--line);border-top:1px solid var(--line)}
+  .artseg button:nth-child(3n+1){border-left:0}
+  .artseg button:nth-child(-n+3){border-top:0}
+}
 
 /* ---------- Fahrzeug hinzufügen ---------- */
 .neufzg{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-top:14px;
@@ -790,6 +797,8 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
 .rechnen{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:22px;padding:16px;
   border:1px solid var(--line-2);border-radius:10px;background:var(--surface)}
 .btn.gross{font-size:15px;font-weight:600;padding:12px 26px}
+/* Anzeige im Berechnen-Kasten: eigene Zeile in voller Breite, sonst bekommt AdSense keine Breite */
+.rechnen .adsense-wrapper{flex:1 1 100%;width:100%;min-width:0}
 .rechnen .hint{margin:0;flex:1;min-width:200px}
 .rank-leer{font-size:13px;color:var(--ink-2);line-height:1.5}
 .rank-leer p{margin:0 0 12px}
@@ -851,13 +860,13 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
   .wrap input[type=text], .wrap select, .grossrow .ir input{font-size:16px!important}
   .f input[type=text]{padding:7px 7px}
   .artwahl{gap:8px 10px}
-  .artseg button{padding:8px 14px}
+  .artseg button{padding:9px 4px}
 
   .neufzg{padding:12px}
   .neufzg.is-leer{padding:20px 14px}
   .neufzg.is-leer h3{font-size:18px}
   .nf-wahl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
-  .nf-wahl .btn{padding:10px 4px;text-align:center}
+  .nf-wahl .btn{padding:10px 4px;text-align:center;white-space:normal;line-height:1.25}
   .neufzg.is-leer .nf-wahl .btn{padding:13px 4px}
   .rechnen{padding:12px;margin-top:16px}
   .rechnen .btn.gross{width:100%}
@@ -977,6 +986,9 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
       <div class="nf-wahl" role="group" aria-label="Neues Fahrzeug mit Antrieb">
         <button class="btn" type="button" data-neu="benzin"><span aria-hidden="true">+</span> Benzin</button>
         <button class="btn" type="button" data-neu="diesel"><span aria-hidden="true">+</span> Diesel</button>
+        <button class="btn" type="button" data-neu="lpg"><span aria-hidden="true">+</span> Autogas</button>
+        <button class="btn" type="button" data-neu="hybrid"><span aria-hidden="true">+</span> Hybrid</button>
+        <button class="btn" type="button" data-neu="phev"><span aria-hidden="true">+</span> Plug-in-Hybrid</button>
         <button class="btn" type="button" data-neu="elektro"><span aria-hidden="true">+</span> Elektro</button>
       </div>
     </section>
@@ -1176,7 +1188,7 @@ const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n)
 const GDEF = {
   years:5, km:15000,
   anlage:1, etfBrutto:5.0, kest:18.5, wfAn:1, wfZins:0, wfLaufzeit:48,   // anlage: Geld wird angelegt (sonst 0 % Zins)
-  pBenzin:2.31, pDiesel:2.47, pHaus:0.32,
+  pBenzin:2.31, pDiesel:2.47, pLPG:1.10, pHaus:0.32,                         // pLPG: Autogas €/l
   pv:0, pEinsp:0.32, einspRest:5, pEinspNach:0.045,                          // pv: PV-Anlage vorhanden
   pAC:0.49, pDC:0.59,
   iFuel:3.0, iStrom:2.0, iGen:2.5
@@ -1191,7 +1203,7 @@ let DETAIL = false; // false = Einfach, true = Detailliert
    mit ihrem Standardwert — die Eingaben bleiben aber gespeichert und
    gelten wieder, sobald man auf Detailliert zurückschaltet.
    ============================================================ */
-const G_EINFACH = ["years","km","pBenzin","pDiesel","pHaus",
+const G_EINFACH = ["years","km","pBenzin","pDiesel","pLPG","pHaus",
                    "wfAn","wfZins","wfLaufzeit"];               // Was-wäre-wenn gehört zur Ergebnisanzeige
 function effG(g){
   if(DETAIL) return g;
@@ -1201,7 +1213,7 @@ function effG(g){
 }
 const V_EINFACH = ["name","art","fin","kaufpreis","foerderung",
   "restwertPct","restwertEur","restwertModus",
-  "verbrauch","versicherung","steuer",
+  "verbrauch","verbrauchE","eAnteil","versicherung","steuer",
   "service","hu","reparatur","baujahr","kmStand",
   "anzahlung","kzins","klaufzeit","ballon","rateModus","kRate","rkFreikm","rkMehrCt","rkRueckgabe","rkRueck",
   "lRate","lSonder","lLaufzeit","lFreikm","lMehrCt","lRueck",
@@ -1234,6 +1246,7 @@ const GFIELDS = {
   energie:[
     {k:"pBenzin",    l:"Benzin (Super E10)", u:"€/l",  s:0.01, dec:3, e:1},
     {k:"pDiesel",    l:"Diesel",             u:"€/l",  s:0.01, dec:3, e:1},
+    {k:"pLPG",       l:"Autogas (LPG)",      u:"€/l",  s:0.01, dec:3, e:1, lpg:1},   // nur sichtbar, wenn ein Autogas-Fahrzeug angelegt ist
     {k:"pHaus",      l:"Haushaltsstrom",     u:"€/kWh",s:0.01, dec:3, e:1},
     {k:"pAC",        l:"Öffentlich AC",      u:"€/kWh",s:0.01, dec:3},
     {k:"pDC",        l:"Schnellladen DC",    u:"€/kWh",s:0.01, dec:3},
@@ -1261,6 +1274,7 @@ const VDEF = {
   besitzt:0,
   kaufpreis:40000, restwertPct:38, restwertEur:15000, restwertModus:"pct", einmalig:200, foerderung:0,
   verbrauch:8.0, abBatterie:1, ladeverlust:12,
+  verbrauchE:20, eAnteil:45, lpgBenzin:5,          // Plug-in: kWh/100 km und Anteil elektrisch; Autogas: Anteil mit Benzin
   aPV:0, aHeim:0, aAC:0, aDC:0,
   versicherung:1000, steuer:200, service:500,
   reifenPreis:800, reifenKm:40000, reifenJahre:4, reifenModus:"km", hu:150, reparatur:500,
@@ -1275,19 +1289,32 @@ const VDEF = {
   lRate:400, lSonder:3000, lLaufzeit:36, lFreikm:15000, lMehrCt:12, lRueck:0
 };
 
+/* Antriebsarten. „verbrauch“ ist beim E-Auto kWh/100 km, bei allen anderen Liter/100 km
+   (beim Autogas-Auto Liter Autogas, beim Plug-in-Hybrid Liter im Benzinbetrieb).      */
+const ARTEN = [["benzin","Benzin"],["diesel","Diesel"],["lpg","Autogas"],["hybrid","Hybrid"],["phev","Plug-in-Hybrid"],["elektro","Elektro"]];
+const laedtStrom  = v => v.art === "elektro" || v.art === "phev";        // lädt an der Steckdose
+const tanktSprit  = v => v.art !== "elektro";                             // hat einen Verbrennungsmotor
+const hatHVBatt   = v => ["elektro","hybrid","phev"].includes(v.art);     // Hochvoltbatterie an Bord
+const LPG_MEHR    = 1.2;   // Autogas braucht rund 20 % mehr Liter als Benzin (ADAC: 10–30 %)
+
 /* Standardwerte, die von der Kraftstoffart abhängen. Alles Übrige gilt für alle Arten. */
+const ART_STD = {
+  diesel: { verbrauch:6.5 },
+  lpg:    { verbrauch:9.5, service:600 },     // Autogas: + rund 100 €/Jahr für Wartung und Prüfung der Gasanlage
+  hybrid: { verbrauch:5.0, steuer:100 },
+  phev:   { verbrauch:6.5, steuer:40 },       // Kfz-Steuer niedrig wegen des geringen CO₂-Normwerts
+  elektro:{ verbrauch:17, steuer:0, garFzg:4, garAntrieb:8 }   // E-Auto: steuerfrei, 4 + 8 Jahre Garantie
+};
 function stdWertArt(art, k){
-  if(art === "elektro"){
-    const e = { verbrauch:17, steuer:0, garFzg:4, garAntrieb:8,                 // E-Auto: steuerfrei, 4 + 8 Jahre Garantie
-                kurveWirkung:Math.round(KURVE_EV*100),                           // Verschleißkurve gedämpft
-                aPV:G.pv ? 35 : 0, aHeim:G.pv ? 50 : 85, aAC:5, aDC:10 };       // Ladeanteile je nach PV-Anlage
-    if(e[k] !== undefined) return e[k];
-  }
-  if(art === "diesel" && k === "verbrauch") return 6.5;
-  return VDEF[k];
+  // Ladeanteile beim E-Auto und Plug-in-Hybrid, je nachdem ob eine PV-Anlage da ist
+  if((art === "elektro" || art === "phev") && ["aPV","aHeim","aAC","aDC"].includes(k))
+    return {aPV:G.pv ? 35 : 0, aHeim:G.pv ? 50 : 85, aAC:5, aDC:10}[k];
+  if(art === "elektro" && k === "kurveWirkung") return Math.round(KURVE_EV*100);   // Verschleißkurve gedämpft
+  const a = ART_STD[art];
+  return (a && a[k] !== undefined) ? a[k] : VDEF[k];
 }
 const stdWert = (v, k) => stdWertArt(v.art, k);
-const ART_FELDER = ["verbrauch","steuer","garFzg","garAntrieb","aPV","aHeim","aAC","aDC","kurveWirkung"];
+const ART_FELDER = ["verbrauch","steuer","service","garFzg","garAntrieb","aPV","aHeim","aAC","aDC","kurveWirkung"];
 
 /* e:1 = auch im Modus Einfach sichtbar; alle anderen Felder nur im Modus Detailliert */
 const VF = {
@@ -1297,17 +1324,24 @@ const VF = {
     {k:"foerderung",l:"Förderung / Zuschuss", u:"€", s:500, nurKauf:true, e:1}
   ],
   energie:[
-    {k:"verbrauch",  l:"Verbrauch", u:"l/100km", s:0.1, dec:1, unitEl:"kWh/100km", e:1},
-    {k:"ladeverlust",l:"Ladeverluste", u:"%", s:1, dec:0, only:"elektro"},
-    {k:"aPV",  l:"Anteil PV-Überschuss", u:"%", s:5, only:"elektro", pvNur:1},
-    {k:"aHeim",l:"Anteil Netzstrom daheim", u:"%", s:5, only:"elektro"},
-    {k:"aAC",  l:"Anteil öffentlich AC", u:"%", s:5, only:"elektro"},
-    {k:"aDC",  l:"Anteil Schnellladen DC", u:"%", s:5, only:"elektro"}
+    {k:"verbrauch",  l:"Verbrauch", u:"l/100km", s:0.1, dec:1, unitEl:"kWh/100km", e:1,
+      l_lpg:"Verbrauch Autogas", l_phev:"Verbrauch im Benzinbetrieb",
+      t_lpg:"Liter Autogas je 100 km. Autogas hat weniger Energie je Liter als Benzin, deshalb liegt der Verbrauch je nach Motor und Anlage etwa 10 bis 30 % über dem Benzinverbrauch — rechne mit rund 20 % mehr.",
+      t_phev:"Was der Plug-in-Hybrid mit leerer Batterie an Benzin braucht, also im reinen Hybridbetrieb. Der Normwert im Prospekt gilt nicht dafür — er unterstellt, dass meist elektrisch gefahren wird.",
+      t_hybrid:"Realverbrauch in Litern je 100 km. Ein Voll- oder Mildhybrid lädt seine Batterie selbst; getankt wird nur Benzin."},
+    {k:"verbrauchE", l:"Verbrauch elektrisch", u:"kWh/100km", s:0.5, dec:1, only:"phev", e:1},
+    {k:"eAnteil",    l:"Elektrisch gefahren", u:"% der km", s:5, only:"phev", e:1},
+    {k:"lpgBenzin",  l:"Davon mit Benzin", u:"% der km", s:1, only:"lpg"},
+    {k:"ladeverlust",l:"Ladeverluste", u:"%", s:1, dec:0, only:["elektro","phev"]},
+    {k:"aPV",  l:"Anteil PV-Überschuss", u:"%", s:5, only:["elektro","phev"], pvNur:1},
+    {k:"aHeim",l:"Anteil Netzstrom daheim", u:"%", s:5, only:["elektro","phev"]},
+    {k:"aAC",  l:"Anteil öffentlich AC", u:"%", s:5, only:["elektro","phev"]},
+    {k:"aDC",  l:"Anteil Schnellladen DC", u:"%", s:5, only:["elektro","phev"]}
   ],
   fix:[
     {k:"versicherung", l:"Versicherung", u:"€/Jahr", s:50, t:"Haftpflicht und Kasko zusammen, in deiner SF-Klasse", e:1},
     {k:"steuer",       l:"Kfz-Steuer",   u:"€/Jahr", s:10, e:1},
-    {k:"ladekarte",    l:"Ladekarte Grundgebühr", u:"€/Monat", s:1, only:"elektro"},
+    {k:"ladekarte",    l:"Ladekarte Grundgebühr", u:"€/Monat", s:1, only:["elektro","phev"]},
     {k:"thg",          l:"THG-Prämie (Erlös)", u:"€/Jahr", s:10, only:"elektro", t:"Treibhausgasminderungsquote: Das Zertifikat für dein E-Auto verkaufst du einmal im Jahr an einen Vermarkter, Frist ist der 15. November. Nur für reine E-Autos, nicht für Hybride. Preisverlauf: 2022 noch 250–400 €, 2023 200–300 €, 2024 rund 100 €, 2025 70–100 €. Für 2026 werden je nach Anbieter 100–180 € genannt."}
   ],
   wartung:[
@@ -1339,18 +1373,18 @@ const VF = {
       t:"Kilometergrenze der Fahrzeuggarantie als Gesamtstand, z. B. 80.000 km bei Tesla. 0 heißt: ohne km-Grenze. Es gilt, was zuerst eintritt.",
       tRest:"Wie viele Kilometer die Fahrzeuggarantie ab heute noch gilt. 0 heißt: ohne km-Grenze."},
     {k:"garRest",       l:"davon selbst tragen", u:"%",    s:5, t:"Was trotz Garantie an dir hängen bleibt. 0 % bedeutet: in diesen Jahren keine Reparaturrücklage."},
-    /* Beim E-Auto gehört die Batterie zur Antriebsgarantie — die Varianten mit „El“ gelten dort */
-    {k:"garAntrieb",    l:"Garantie Antrieb", lEl:"Garantie Antrieb/Batterie",
-      lRest:"Restgarantie Antrieb", lRestEl:"Restgarantie Antrieb/Batterie", u:"Jahre", s:1,
+    /* Mit Hochvoltbatterie (E-Auto, Hybrid, Plug-in) gehört die Batterie zur Antriebsgarantie — dort gelten die Varianten „Bat“ */
+    {k:"garAntrieb",    l:"Garantie Antrieb", lBat:"Garantie Antrieb/Batterie",
+      lRest:"Restgarantie Antrieb", lRestBat:"Restgarantie Antrieb/Batterie", u:"Jahre", s:1,
       t:"Garantie auf den Antriebsstrang, also Motor und Getriebe, ab Erstzulassung gerechnet. Manche Hersteller geben darauf länger Garantie als aufs übrige Fahrzeug. Gibt es keine eigene Antriebsgarantie, bleibt das Feld auf 0.",
-      tEl:"Meist länger als die Fahrzeuggarantie — bei E-Autos oft 8 Jahre auf Antriebsstrang und Batterie, ab Erstzulassung gerechnet.",
+      tBat:"Meist länger als die Fahrzeuggarantie — bei E-Autos oft 8 Jahre auf Antriebsstrang und Batterie, bei Hybriden oft 8 Jahre auf die Hochvoltbatterie, ab Erstzulassung gerechnet.",
       tRest:"Wie viele Jahre die Garantie auf den Antrieb ab heute noch läuft. Bei einer km-Grenze gilt, was zuerst erreicht ist: verbleibende km geteilt durch deine Fahrleistung.",
-      tRestEl:"Wie viele Jahre die Garantie auf Antrieb und Batterie ab heute noch läuft. Bei einer km-Grenze (z. B. 160.000 km) gilt, was zuerst erreicht ist: verbleibende km geteilt durch deine Fahrleistung."},
+      tRestBat:"Wie viele Jahre die Garantie auf Antrieb und Batterie ab heute noch läuft. Bei einer km-Grenze (z. B. 160.000 km) gilt, was zuerst erreicht ist: verbleibende km geteilt durch deine Fahrleistung."},
     {k:"garAntriebKm",  l:"oder bis km-Stand", lRest:"oder noch km", u:"km", s:10000,
       t:"Kilometergrenze der Antriebsgarantie als Gesamtstand. 0 heißt: ohne km-Grenze. Es gilt, was zuerst eintritt.",
-      tEl:"Kilometergrenze der Akku- und Antriebsgarantie als Gesamtstand, meist 160.000 km. 0 heißt: ohne km-Grenze. Es gilt, was zuerst eintritt — bei einem Gebrauchten mit vielen Kilometern oft die km-Grenze.",
+      tBat:"Kilometergrenze der Akku- und Antriebsgarantie als Gesamtstand, meist 160.000 km. 0 heißt: ohne km-Grenze. Es gilt, was zuerst eintritt — bei einem Gebrauchten mit vielen Kilometern oft die km-Grenze.",
       tRest:"Wie viele Kilometer die Antriebsgarantie ab heute noch gilt. 0 heißt: ohne km-Grenze.",
-      tRestEl:"Wie viele Kilometer die Akku- und Antriebsgarantie ab heute noch gilt. 0 heißt: ohne km-Grenze."},
+      tRestBat:"Wie viele Kilometer die Akku- und Antriebsgarantie ab heute noch gilt. 0 heißt: ohne km-Grenze."},
     {k:"garAntriebRest",l:"davon selbst tragen", u:"%",    s:5, t:"Nach Ablauf der Fahrzeuggarantie deckt die Antriebsgarantie nur noch einen Teil ab — der Rest bleibt bei dir."}
   ],
   leasing:[
@@ -1392,7 +1426,7 @@ function mkVehicle(over){
 function startFahrzeuge(){ return []; }
 let vehicles = startFahrzeuge();
 
-const ART_NAME = {benzin:"Benziner", diesel:"Diesel", elektro:"Elektroauto"};
+const ART_NAME = {benzin:"Benziner", diesel:"Diesel", lpg:"Autogas", hybrid:"Hybrid", phev:"Plug-in-Hybrid", elektro:"Elektroauto"};
 function neuesFahrzeug(art){
   if(vehicles.length >= MAX_FZG) return null;
   const basis = ART_NAME[art] || "Fahrzeug";
@@ -1575,6 +1609,19 @@ function mehrKmJahr(v, km){
   return Math.max(0, km - v.rkFreikm) * (v.rkMehrCt||0)/100;
 }
 
+/* Kraftstoffkosten je 100 km im Verbrennerbetrieb. Autogas: der Benzinanteil braucht rund
+   20 % weniger Liter als Autogas (gleiche Energie, höherer Heizwert je Liter).          */
+function spritJe100km(v, g){
+  if(v.art === "diesel") return v.verbrauch * g.pDiesel;
+  if(v.art === "lpg"){
+    const b = Math.min(1, Math.max(0, (v.lpgBenzin||0)/100));
+    return (1-b) * v.verbrauch * g.pLPG + b * (v.verbrauch/LPG_MEHR) * g.pBenzin;
+  }
+  return v.verbrauch * g.pBenzin;                      // Benzin, Hybrid, Plug-in im Benzinbetrieb
+}
+// Anteil der Kilometer, die ein Plug-in-Hybrid elektrisch fährt (0…1)
+const eAnteil = v => Math.min(1, Math.max(0, (v.eAnteil||0)/100));
+
 // liefert {items:[{y,a,b}], blocks:{}, total, perMonth, perKm, notes:[]}
 function calc(v, g, kmOverride){
   v = effV(v); g = effG(g);          // im Modus Einfach: ausgeblendete Felder mit Standardwerten
@@ -1587,12 +1634,16 @@ function calc(v, g, kmOverride){
 
   const gi = 1 + g.iGen/100;   // allgemeine Kostensteigerung
 
-  /* ---- Energie ---- */
-  let kwhBrutto = 0, mix = 0, mixSpaet = 0;
+  /* ---- Energie ----
+     E-Auto: nur Strom. Plug-in-Hybrid: der elektrisch gefahrene Anteil mit Strom, der Rest mit Benzin.
+     Autogas: Autogas, dazu ein kleiner Anteil Benzin (Kaltstart, leerer Gastank). Hybrid: Benzin.   */
+  let kwhBrutto = 0, mix = 0, mixSpaet = 0, stromJ1 = 0, spritJ1 = 0;
+  const kmStrom = v.art === "elektro" ? km : v.art === "phev" ? km*eAnteil(v) : 0;
+  const kmSprit = km - kmStrom;
   for(let t=1;t<=N;t++){
-    let e = 0;
-    if(v.art==="elektro"){
-      const netto = km/100 * v.verbrauch;
+    let strom = 0, sprit = 0;
+    if(laedtStrom(v)){
+      const netto = kmStrom/100 * (v.art === "phev" ? v.verbrauchE : v.verbrauch);
       const loss  = v.abBatterie ? Math.min(0.6, Math.max(0, v.ladeverlust/100)) : 0;
       kwhBrutto   = netto/(1-loss);
       const sum   = v.aPV + v.aHeim + v.aAC + v.aDC;
@@ -1603,12 +1654,11 @@ function calc(v, g, kmOverride){
       const m = (la.pv*einsp + la.heim*g.pHaus + la.ac*g.pAC + la.dc*g.pDC)/s;
       if(t===1) mix = m;
       mixSpaet = m;
-      e = kwhBrutto * m * Math.pow(1+g.iStrom/100, t-1);
-    } else {
-      const p = v.art==="diesel" ? g.pDiesel : g.pBenzin;
-      e = km/100 * v.verbrauch * p * Math.pow(1+g.iFuel/100, t-1);
+      strom = kwhBrutto * m * Math.pow(1+g.iStrom/100, t-1);
     }
-    add(t, e, "energie");
+    if(tanktSprit(v)) sprit = kmSprit/100 * spritJe100km(v, g) * Math.pow(1+g.iFuel/100, t-1);
+    if(t===1){ stromJ1 = strom; spritJ1 = sprit; }
+    add(t, strom + sprit, "energie");
   }
 
   /* ---- Fixkosten ---- */
@@ -1622,11 +1672,10 @@ function calc(v, g, kmOverride){
     add(t, v.reparatur*f*repFaktor(v, g, t)*repKmFaktor(km)*garantieAnteil(v, t, km), "wartung");
     add(t, reifenProJahr(v, km)*f, "wartung");
     if(huFaellig(v, t)) add(t, v.hu*f, "wartung");
-    if(v.art==="elektro"){
-      add(t, v.ladekarte*12*f, "sonstiges");
-      // THG-Prämie mindert die Energiekosten — sie ist ein Erlös je gefahrenem E-Kilometer
-      add(t, -v.thg,           "energie");
-    }
+    if(laedtStrom(v)) add(t, v.ladekarte*12*f, "sonstiges");
+    // THG-Prämie mindert die Energiekosten — sie ist ein Erlös je gefahrenem E-Kilometer.
+    // Nur für reine E-Autos, Plug-in-Hybride sind ausgeschlossen.
+    if(v.art==="elektro") add(t, -v.thg, "energie");
   }
 
   /* ---- Geplante Großreparaturen ---- */
@@ -1735,7 +1784,7 @@ function calc(v, g, kmOverride){
     kostenEnd: kosten[kosten.length-1],
     perMonth: total/(N*12),
     perKm: km>0 ? total/(N*km) : 0,
-    mix, mixSpaet, kwhBrutto
+    mix, mixSpaet, kwhBrutto, stromJ1, spritJ1
   };
 }
 
@@ -1748,6 +1797,7 @@ const HILFE = {
   km:"Deine Jahresfahrleistung — der stärkste einzelne Hebel im ganzen Vergleich. An ihr entscheidet sich meist, ob Verbrenner oder Elektro vorn liegt.",
   pBenzin:"Preis je Liter Super E10. Super E5 liegt üblicherweise 5 bis 6 Cent darüber.",
   pDiesel:"Preis je Liter Diesel.",
+  pLPG:"Preis je Liter Autogas (LPG). Im September 2026 lag er im Schnitt bei rund 1,10 €. Autogas ist deutlich günstiger als Benzin, weil die Energiesteuer nur 22,09 ct je Liter beträgt statt 65,45 ct — die frühere zusätzliche Steuerermäßigung ist Ende 2022 ausgelaufen.",
   pHaus:"Dein Arbeitspreis für Haushaltsstrom ohne Grundgebühr — steht auf der Jahresabrechnung.",
   pEinsp:"Was du je eingespeister Kilowattstunde bekommst. Das ist zugleich der Preis, den dich selbst geladener PV-Strom kostet: Diese Vergütung entgeht dir nämlich.",
   einspRest:"Restlaufzeit der EEG-Vergütung. Sie läuft 20 volle Kalenderjahre plus das Inbetriebnahmejahr — eine Anlage von 2011 wird Ende 2031 ausgefördert.",
@@ -1763,14 +1813,17 @@ const HILFE = {
   /* Anschaffung */
   kaufpreis:"Der Preis, den du tatsächlich zahlst: inklusive Mehrwertsteuer, abzüglich Rabatt. Auch bei vorgegebener Rate nötig, denn daraus ergibt sich der effektive Zins des Angebots. Gehört dir das Fahrzeug schon, setz den Haken darüber — dann zählt hier der heutige Zeitwert.",
   besitzt:"Bei einem Fahrzeug, das dir schon gehört, gibt es keinen Kaufpreis. Stattdessen zählt der heutige Zeitwert: Diesen Betrag bekämst du beim Verkauf, und indem du das Auto behältst, verzichtest du darauf. Der Wertverlust ist dann Zeitwert minus Restwert am Ende. Finanzierung und Förderung entfallen, beides gibt es für ein bereits vorhandenes Fahrzeug nicht.",
-  einmalig:"Alles, was einmal zu Beginn anfällt: Zulassung, Überführung, Wallbox, Winterreifensatz, Anhängerkupplung.",
-  foerderung:"Staatlicher Zuschuss oder Herstellerprämie. Wichtig: Der Betrag mindert deine Zahlung, <em>nicht</em> den Wert des Fahrzeugs — deshalb bleibt im Kaufpreis der Listenpreis stehen, damit der Restwert stimmt. Die E-Auto-Prämie 2026 liegt je nach Haushaltseinkommen und Kindern zwischen 3.000 und 6.000 € für reine E-Autos, bei Plug-in-Hybriden zwischen 1.500 und 4.500 €. Sie wird nach der Zulassung beantragt und überwiesen, nicht beim Händler verrechnet — im Modell deshalb ein halbes Jahr nach dem Kauf angesetzt.",
+  einmalig:"Alles, was einmal zu Beginn anfällt: Zulassung, Überführung, Wallbox, Winterreifensatz, Anhängerkupplung. Bei einem Auto, das du auf Autogas umrüsten lässt, gehört auch die Umrüstung hierher: laut ADAC 1.800 bis 3.500 €, dazu 110 € für die Abnahme der Anlage.",
+  foerderung:"Staatlicher Zuschuss oder Herstellerprämie. Wichtig: Der Betrag mindert deine Zahlung, <em>nicht</em> den Wert des Fahrzeugs — deshalb bleibt im Kaufpreis der Listenpreis stehen, damit der Restwert stimmt. Die E-Auto-Prämie 2026 liegt je nach Haushaltseinkommen und Kindern zwischen 3.000 und 6.000 € für reine E-Autos, bei Plug-in-Hybriden zwischen 1.500 und 4.500 € — Plug-in-Hybride aber nur mit höchstens 60 g CO₂/km oder mindestens 80 km elektrischer Reichweite, bei Erstzulassung vom 1.1.2026 bis 30.6.2027. Sie wird nach der Zulassung beantragt und überwiesen, nicht beim Händler verrechnet — im Modell deshalb ein halbes Jahr nach dem Kauf angesetzt.",
   restwertPct:"Was das Fahrzeug am Ende noch wert ist, in Prozent vom Kaufpreis. Meist der größte Einzelposten der ganzen Rechnung — größer als der Sprit. Anhaltspunkte für fünf Jahre: E-Autos etwa 40 bis 48 %, vergleichbare Verbrenner rund 5 bis 10 Prozentpunkte darüber. Mit dem Schalter rechts wechselst du auf einen Eurobetrag. Die verlässlichste Quelle bleibt eine Gebrauchtwagenbörse für dein Modell im Zielalter.",
   restwertEur:"Was das Fahrzeug am Ende noch wert ist, als Betrag. Mit dem Schalter rechts wechselst du zurück auf einen Prozentsatz vom Kaufpreis. Bei einem Fahrzeug, das du schon besitzt, ist der absolute Wert meist die ehrlichere Angabe.",
 
   /* Energie */
   verbrauch:"Realverbrauch, nicht Herstellerangabe. Beim Verbrenner Liter je 100 km, beim E-Auto Kilowattstunden je 100 km.",
   ladeverlust:"Was beim Laden zwischen Steckdose und Batterie verloren geht. An der Wallbox rund 10 bis 15 %, an der Schuko-Steckdose mehr, am Schnelllader weniger.",
+  verbrauchE:"Stromverbrauch des Plug-in-Hybrids im Elektrobetrieb, in kWh je 100 km. Plug-in-Hybride sind schwerer als vergleichbare E-Autos und brauchen elektrisch meist etwas mehr — rund 20 kWh sind ein realistischer Startwert.",
+  eAnteil:"Wie viel Prozent deiner Kilometer der Plug-in-Hybrid wirklich elektrisch fährt — der Wert, an dem die ganze Rechnung hängt. Laut Fraunhofer ISI und ICCT liegen privat genutzte Plug-in-Hybride real bei rund 45 bis 49 %, Dienstwagen bei 11 bis 15 %; die offizielle Norm unterstellt 70 bis 85 %. Wer täglich lädt und kurze Strecken fährt, kommt höher, wer oft Langstrecke fährt oder selten lädt, deutlich tiefer.",
+  lpgBenzin:"Auch ein Autogas-Auto fährt einen Teil der Strecke mit Benzin: beim Kaltstart, bis der Motor warm ist, und wenn der Gastank leer ist. Wie groß der Anteil ist, hängt an Anlage und Fahrprofil; 5 % ist ein grober Startwert, bei vielen Kurzstrecken mehr.",
   aPV:"Anteil der Ladung aus dem eigenen PV-Überschuss. Ohne Speicher und bei Ladung über Nacht realistisch 20 bis 30 %, nicht 80 %.",
   aHeim:"Anteil der Ladung aus dem Netz zu Hause.",
   aAC:"Anteil an öffentlichen Wechselstrom-Ladepunkten.",
@@ -1778,12 +1831,12 @@ const HILFE = {
 
   /* Feste Jahreskosten */
   versicherung:"Haftpflicht und Kasko zusammen, in deiner Schadenfreiheitsklasse. E-Autos liegen in der Kasko oft höher, in der Haftpflicht häufig niedriger. Zwei echte Angebote sind hier mehr wert als jeder Schätzwert.",
-  steuer:"Jährliche Kfz-Steuer. Reine E-Autos mit Erstzulassung bis Ende 2030 sind bis 2035 befreit, längstens zehn Jahre ab Erstzulassung.",
+  steuer:"Jährliche Kfz-Steuer. Reine E-Autos mit Erstzulassung bis Ende 2030 sind bis 2035 befreit, längstens zehn Jahre ab Erstzulassung. Hybride, Plug-in-Hybride und Autogas-Autos zahlen normal nach Hubraum und CO₂-Normwert — beim Plug-in-Hybrid ist der Normwert so niedrig, dass meist nur der Hubraumanteil bleibt. Den genauen Betrag zeigt der Kfz-Steuerrechner des Bundesfinanzministeriums.",
   ladekarte:"Monatliche Grundgebühr für Ladekarten oder ein Schnelllade-Abo.",
   thg:"Die Treibhausgasminderungsquote: Das Zertifikat deines E-Autos verkaufst du einmal jährlich, Frist ist der 15. November. Nur für reine E-Autos, nicht für Hybride. Der Preis ist seit 2022 stark gefallen; für 2026 nennen Anbieter 100 bis 180 €.",
 
   /* Wartung */
-  service:"Was Service und Inspektion im Jahr kosten. Bei einer Inspektion alle zwei Jahre trägst du die Hälfte der Rechnung ein, dazu Kleinteile wie Wischerblätter und beim E-Auto in Salzregionen das Reinigen der Bremssättel. Der ADAC hat 2026 bei fünf Herstellern 94 Kostenvoranschläge eingeholt: E-Autos lagen rund ein Drittel unter dem vergleichbaren Verbrenner — beim BMW i4 etwa 527 € in Hamburg gegen 1.054 € beim M440i, jeweils alle zwei Jahre. Einzige Ausnahme war Dacia, dort war der Verbrenner günstiger.",
+  service:"Was Service und Inspektion im Jahr kosten. Bei einer Inspektion alle zwei Jahre trägst du die Hälfte der Rechnung ein, dazu Kleinteile wie Wischerblätter und beim E-Auto in Salzregionen das Reinigen der Bremssättel. Der ADAC hat 2026 bei fünf Herstellern 94 Kostenvoranschläge eingeholt: E-Autos lagen rund ein Drittel unter dem vergleichbaren Verbrenner — beim BMW i4 etwa 527 € in Hamburg gegen 1.054 € beim M440i, jeweils alle zwei Jahre. Einzige Ausnahme war Dacia, dort war der Verbrenner günstiger. Beim Autogas-Auto kommt die Wartung der Gasanlage dazu, laut ADAC alle 20.000 bis 25.000 km für 100 bis 150 € — der Standardwert liegt deshalb 100 € höher.",
   reifenPreis:"Preis für einen kompletten Reifensatz inklusive Montage.",
   reifenKm:"Nach wie vielen Kilometern ein Satz fällig ist. E-Autos sind schwer und drehmomentstark — dort hält ein Satz oft kürzer. Mit dem Schalter rechts stellst du auf Jahre um.",
   reifenJahre:"Nach wie vielen Jahren ein Satz fällig ist — die bessere Wahl, wenn du wenig fährst und die Reifen eher altern als abfahren. Nach sechs bis acht Jahren gelten Reifen auch mit gutem Profil als zu alt. Mit dem Schalter rechts geht es zurück auf Kilometer.",
@@ -1994,6 +2047,7 @@ function renderGlobals(){
     GFIELDS[grp].forEach(f=>{
       if(!DETAIL && !f.e) return;
       if(f.pv) return;                                   // PV-Felder kommen in den eigenen Unterpunkt
+      if(f.lpg && !LPG_DA) return;                       // Autogaspreis nur, wenn ein Autogas-Fahrzeug angelegt ist
       host.append(gFeld(f));
     });
 
@@ -2321,7 +2375,10 @@ function garantieInfoText(v){
     + "Gedeckelt wird ausschließlich die <em>Reparaturrücklage</em>. Inspektion, Reifen und HU bleiben unberührt, denn eine Garantie deckt Defekte, keinen Verschleiß und keine Wartung. "
     + (v.art === "elektro"
       ? "Typisch beim E-Auto: vier Jahre auf das Fahrzeug, acht Jahre auf Antriebsstrang und Batterie — Letztere meist zusätzlich an eine Mindestkapazität gekoppelt."
-      : "Beim Verbrenner gibt nur ein Teil der Hersteller eine eigene, längere Garantie auf den Antrieb — gibt es keine, bleibt <em>Garantie Antrieb</em> auf 0.");
+      : (v.art === "hybrid" || v.art === "phev")
+      ? "Beim Hybrid und Plug-in-Hybrid gilt für die Hochvoltbatterie meist eine eigene, längere Garantie: bei BMW, Mercedes und VW 8 Jahre/160.000 km, bei Toyota mit Wartung in der Vertragswerkstatt bis 10 Jahre/350.000 km. Trag sie unter <em>Garantie Antrieb/Batterie</em> ein."
+      : "Beim Verbrenner gibt nur ein Teil der Hersteller eine eigene, längere Garantie auf den Antrieb — gibt es keine, bleibt <em>Garantie Antrieb</em> auf 0."
+        + (v.art === "lpg" ? " Bei einer nachgerüsteten Gasanlage gibt meist der Umrüster eine eigene Garantie auf die Anlage; die Herstellergarantie kann für betroffene Teile entfallen." : ""));
 }
 
 /* Verschleißkurve: Alter und Laufleistung treiben die Reparaturrücklage. */
@@ -2367,9 +2424,16 @@ function verschleissBlock(v, idx){
         + "Was hinzukommt: Der TÜV-Report nennt bei E-Autos Achsaufhängungen (hohes Batteriegewicht), Bremsscheiben (Korrosion, weil die Reibbremse durch Rekuperation selten arbeitet) und Beleuchtung. "
         + "Die " + ew + " % sind eine begründete Annahme, keine Messung — für E-Autos jenseits von sieben Jahren gibt es schlicht noch keine belastbare Datenbasis. "
         + "Rechnest du vorsichtig, setz den Wert höher."
-      : "<strong>Beim Verbrenner gilt die Kurve voll — voreingestellt sind 100 %.</strong> "
+      : (v.art === "hybrid" || v.art === "phev")
+      ? "<strong>Beim Hybrid gilt die Kurve voll — voreingestellt sind 100 %.</strong> "
+        + "Der komplette Verbrennungsmotor ist an Bord, dazu Elektromotor und Hochvoltbatterie. Die Bremsbeläge halten zwar etwa doppelt so lange, weil der Elektromotor mitbremst; "
+        + "dafür kommen Hochvolt-Komponenten hinzu, die nur dafür qualifizierte Werkstätten anfassen dürfen. Eine belastbare Reparaturstatistik nach Antrieb gibt es nicht — "
+        + "weniger als 100 % setzt du nur, wenn dein Modell nachweislich robuster altert als der Durchschnitt."
+      : "<strong>" + (v.art === "lpg" ? "Beim Autogas-Auto" : "Beim Verbrenner") + " gilt die Kurve voll — voreingestellt sind 100 %.</strong> "
         + "Sie stammt aus einer Flotte, die fast nur aus Verbrennern besteht. Beim E-Auto steigt sie schwächer an, voreingestellt " + ew + " %, "
-        + "weil dort Ölwechsel, Zahnriemen, Abgasanlage und Kupplung wegfallen. Weniger als 100 % setzt du hier nur, wenn dein Modell nachweislich robuster altert als der Durchschnitt.";
+        + "weil dort Ölwechsel, Zahnriemen, Abgasanlage und Kupplung wegfallen. "
+        + (v.art === "lpg" ? "Die Wartung der Gasanlage steckt nicht in der Kurve, sondern im höheren Betrag für Service/Inspektion. " : "")
+        + "Weniger als 100 % setzt du hier nur, wenn dein Modell nachweislich robuster altert als der Durchschnitt.";
     wrap.append(ev);
   }
   return wrap;
@@ -2521,7 +2585,8 @@ function grossBlock(v, idx){
 function fixBadge(v){
   v = effV(v);
   let s = v.versicherung + v.steuer;
-  if(v.art==="elektro") s += v.ladekarte*12 - v.thg;
+  if(laedtStrom(v)) s += v.ladekarte*12;
+  if(v.art==="elektro") s -= v.thg;
   return eur(s) + "/Jahr";
 }
 function wartungBadge(v){
@@ -2569,7 +2634,22 @@ function pvHintText(el){
 }
 
 // Live-Statuszeile einer Fahrzeugkarte (Mischpreis / Ladeanteile / Spritkosten)
+/* Ab diesem elektrischen Anteil wird ein Plug-in-Hybrid als unrealistisch markiert.
+   Fraunhofer ISI/ICCT: privat real rund 45–49 %, Dienstwagen 11–15 %, WLTP unterstellt 70–85 %. */
+const PHEV_WARN = 70;
 function statusText(el, v, res){
+  if(v.art === "phev"){
+    const e = effV(v), warn = [];
+    let s = res ? "Jahr 1: " + eur(res.spritJ1) + " Benzin + " + eur(res.stromJ1) + " Strom bei "
+                  + nf0.format(e.eAnteil) + " % elektrisch gefahrenen km" : "";
+    if(res && DETAIL) s += " · Mischpreis " + nf1.format(res.mix*100) + " ct/kWh";
+    const sum = e.aPV+e.aHeim+e.aAC+e.aDC;
+    if(DETAIL && Math.abs(sum-100) > 0.5) warn.push("Ladeanteile ergeben " + nf0.format(sum) + " % statt 100 % — gerechnet wird anteilig normiert.");
+    if((e.eAnteil||0) > PHEV_WARN) warn.push("Mehr als " + PHEV_WARN + " % elektrisch ist im Alltag selten: Privat fahren Plug-in-Hybride real rund 45–49 % elektrisch, Dienstwagen nur 11–15 %.");
+    el.className = warn.length ? "warnline" : "okline";
+    el.textContent = s + (warn.length ? ". " + warn.join(" ") : "");
+    return;
+  }
   if(v.art==="elektro" && !DETAIL){
     el.className = "okline";
     el.textContent = res
@@ -2597,8 +2677,12 @@ function statusText(el, v, res){
     }
   } else {
     el.className = "okline";
-    const pr = v.art==="diesel" ? G.pDiesel : G.pBenzin;
-    el.textContent = "Spritkosten Jahr 1: " + eur(G.km/100*v.verbrauch*pr) + " bei " + nf0.format(G.km) + " km";
+    const g = effG(G), e = effV(v);
+    const j1 = res ? res.spritJ1 : g.km/100*spritJe100km(e, g);
+    el.textContent = v.art === "lpg"
+      ? "Kraftstoff Jahr 1: " + eur(j1) + " bei " + nf0.format(g.km) + " km — Autogas zu " + nf2.format(g.pLPG) + " €/l, "
+        + nf0.format(e.lpgBenzin) + " % der Strecke mit Benzin"
+      : "Spritkosten Jahr 1: " + eur(j1) + " bei " + nf0.format(g.km) + " km";
   }
 }
 
@@ -2613,7 +2697,7 @@ function setzeArt(v, art){
   // Liter und Kilowattstunden passen nicht zueinander: offensichtlich falsche Einheit ersetzen
   if(art === "elektro" && v.verbrauch < 10) v.verbrauch = stdWertArt(art, "verbrauch");
   if(art !== "elektro" && alt === "elektro" && v.verbrauch > 14) v.verbrauch = stdWertArt(art, "verbrauch");
-  if(art === "elektro" && v.aPV+v.aHeim+v.aAC+v.aDC === 0)
+  if((art === "elektro" || art === "phev") && v.aPV+v.aHeim+v.aAC+v.aDC === 0)
     ["aPV","aHeim","aAC","aDC"].forEach(k => { v[k] = stdWertArt(art, k); });
   v.art = art;
 }
@@ -2622,11 +2706,14 @@ function artWahl(v, idx){
   const row = document.createElement("div"); row.className = "artwahl";
   const lab = document.createElement("span"); lab.className = "artlab"; lab.id = "v"+idx+"-artlab";
   lab.textContent = "Kraftstoffart";
-  lab.append(infoBtn("Bestimmt, womit gerechnet wird: Benzin- oder Dieselpreis bzw. Haushaltsstrom, dazu Kfz-Steuer und die Verschleißkurve, die beim E-Auto flacher verläuft. "
-    + "Beim Wechsel setzt der Rechner passende Startwerte für den Verbrauch; alles bleibt danach frei änderbar.", "Kraftstoffart"));
+  lab.append(infoBtn("Bestimmt, womit gerechnet wird: Benzin-, Diesel- oder Autogaspreis bzw. Strom, dazu Kfz-Steuer und die Verschleißkurve, die beim E-Auto flacher verläuft. "
+    + "<em>Hybrid</em> heißt Voll- oder Mildhybrid: Er lädt seine Batterie selbst und tankt nur Benzin. "
+    + "<em>Plug-in-Hybrid</em> lädt zusätzlich an der Steckdose; gerechnet wird mit dem Anteil der Kilometer, die du elektrisch fährst. "
+    + "<em>Autogas</em> fährt mit Flüssiggas (LPG) und für einen kleinen Teil der Strecke mit Benzin. "
+    + "Beim Wechsel setzt der Rechner passende Startwerte; alles bleibt danach frei änderbar.", "Kraftstoffart"));
   const seg = document.createElement("div"); seg.className = "artseg";
   seg.setAttribute("role","group"); seg.setAttribute("aria-labelledby", "v"+idx+"-artlab");
-  [["benzin","Benzin"],["diesel","Diesel"],["elektro","Elektro"]].forEach(([art, txt])=>{
+  ARTEN.forEach(([art, txt])=>{
     const b = document.createElement("button");
     b.type = "button"; b.textContent = txt; b.id = "v"+idx+"-art-"+art;
     b.setAttribute("aria-pressed", String(v.art===art));
@@ -2702,21 +2789,22 @@ function renderVehicles(){
         if(!DETAIL && !f.e && !alleEinfach) return;
         if(f.custom === "reifen"){ g.append(reifenFeld(v, idx)); return; }
         if(f.custom === "rep"){ g.append(repFeld(v, idx, f)); return; }
-        if(f.only && v.art!==f.only) return;
+        if(f.only && ![].concat(f.only).includes(v.art)) return;    // only: Antrieb oder Liste von Antrieben
         if(f.pvNur && !G.pv) return;                 // PV-Anteil nur mit PV-Anlage
         if(f.notFor && v.fin===f.notFor) return;
         if(f.nurKauf && istBesitz(v)) return;
         if(f.modus && (v.rateModus||"zins") !== f.modus) return;
-        const el   = v.art === "elektro";
+        const el   = v.art === "elektro", bat = hatHVBatt(v);
         const unit = (f.unitEl && el) ? f.unitEl : f.u;
         const rest = v.garBezug === "heute";
-        // Beschriftung und Erklärung: Besitz > Restlaufzeit > Normalfall, jeweils mit E-Auto-Variante
+        // Beschriftung und Erklärung: Besitz > Restlaufzeit > Normalfall.
+        // Varianten: l_<antrieb>/t_<antrieb> für einen Antrieb, lBat/tBat für alle mit Hochvoltbatterie
         const lab = (f.lBesitz && istBesitz(v)) ? f.lBesitz
-                  : (f.lRest && rest) ? ((el && f.lRestEl) || f.lRest)
-                  : ((el && f.lEl) || f.l);
+                  : (f.lRest && rest) ? ((bat && f.lRestBat) || f.lRest)
+                  : (f["l_"+v.art] || (bat && f.lBat) || f.l);
         const tip = (f.tBesitz && istBesitz(v)) ? f.tBesitz
-                  : (f.tRest && rest) ? ((el && f.tRestEl) || f.tRest)
-                  : ((el && f.tEl) || f.t);
+                  : (f.tRest && rest) ? ((bat && f.tRestBat) || f.tRest)
+                  : (f["t_"+v.art] || (bat && f.tBat) || f.t);
         g.append(field("v"+idx+"-"+f.k, lab, unit, v[f.k], stdWert(v, f.k), f.s, f.dec,
           val => { v[f.k] = isFinite(val) ? val : 0; renderResultsOnly(); }, tip));
       });
@@ -2820,12 +2908,12 @@ function renderVehicles(){
 
     // Energie
     const eExtra = [];
-    if(v.art==="elektro" && !DETAIL){
+    if(laedtStrom(v) && !DETAIL){
       const p = document.createElement("p");
       p.id = "v"+idx+"-status";
       statusText(p, v, res);
       eExtra.push(p);
-    } else if(v.art==="elektro"){
+    } else if(laedtStrom(v)){
       const p = document.createElement("div");
       p.id = "v"+idx+"-status";
       statusText(p, v, res);
@@ -3458,7 +3546,7 @@ function renderTable(results){
 function renderMethod(){
   document.getElementById("method").innerHTML = `
 <h3>Einfach und Detailliert</h3>
-<p>Der Schalter oben bestimmt, wie viele Felder du siehst — nicht, wie gerechnet wird. Im Modus <em>Einfach</em> zählen nur die sichtbaren Felder: Zeitraum, Fahrleistung, Benzin-, Diesel- und Haushaltsstrompreis, dazu je Fahrzeug Kraftstoffart, Bezahlung, Kaufpreis, Förderung, Restwert, Finanzierung, Garantie, Verbrauch, Versicherung, Kfz-Steuer, Service/Inspektion, HU, Reparaturen, Erstzulassung und Kilometerstand. Alles andere geht mit seinem Standardwert ein; E-Autos laden zu 100 % mit Haushaltsstrom, inklusive 12 % Ladeverlust, und bekommen 150 € THG-Prämie im Jahr. Die Preissteigerung ist dort fest: 3,0 % für Kraftstoff, 2,0 % für Strom, 2,5 % für alles Übrige.</p>
+<p>Der Schalter oben bestimmt, wie viele Felder du siehst — nicht, wie gerechnet wird. Im Modus <em>Einfach</em> zählen nur die sichtbaren Felder: Zeitraum, Fahrleistung, Benzin-, Diesel- und Haushaltsstrompreis, dazu je Fahrzeug Kraftstoffart, Bezahlung, Kaufpreis, Förderung, Restwert, Finanzierung, Garantie, Verbrauch, Versicherung, Kfz-Steuer, Service/Inspektion, HU, Reparaturen, Erstzulassung und Kilometerstand, beim Plug-in-Hybrid zusätzlich Stromverbrauch und elektrischer Anteil. Alles andere geht mit seinem Standardwert ein; E-Autos laden zu 100 % mit Haushaltsstrom, inklusive 12 % Ladeverlust, und bekommen 150 € THG-Prämie im Jahr. Die Preissteigerung ist dort fest: 3,0 % für Kraftstoff, 2,0 % für Strom, 2,5 % für alles Übrige.</p>
 <p>Was du im Modus <em>Detailliert</em> eingetragen hast — PV-Anlage, öffentliches Laden, Kapitalanlage, Reifen, Großreparaturen —, bleibt beim Umschalten gespeichert und gilt wieder, sobald du zurückschaltest.</p>
 
 <h3>Berechnen</h3>
@@ -3493,7 +3581,17 @@ function renderMethod(){
 <p>Die Tabelle <em>Sofort bezahlen oder finanzieren?</em> nutzt eine Abkürzung: Sprit, Versicherung, Wartung und Wertverlust sind bei Barkauf und Finanzierung identisch und kürzen sich heraus. Verglichen werden deshalb nur die Anschaffungszahlungen — beim Barkauf der Kaufpreis heute, bei der Finanzierung Anzahlung, Monatsraten und Schlussrate, jede auf ihren eigenen Monat abgezinst. Der Kipppunkt wird durch Intervallhalbierung gesucht: der Sollzins, bei dem beide Barwerte gleich sind.</p>
 
 <h3>Energie</h3>
-<p>Verbrenner: <code>km/100 × Verbrauch × Preis</code>, jährlich mit der Kraftstoff-Teuerung fortgeschrieben.</p>
+<p>Verbrenner: <code>km/100 × Verbrauch × Preis</code>, jährlich mit der Kraftstoff-Teuerung fortgeschrieben. Ein <em>Hybrid</em> (Voll- oder Mildhybrid) rechnet genauso — er lädt seine Batterie selbst und tankt nur Benzin; sein Vorteil steckt allein im niedrigeren Verbrauch.</p>
+<p><strong>Autogas (LPG):</strong> Ein Autogas-Auto fährt den größten Teil mit Flüssiggas, beim Kaltstart und mit leerem Gastank aber mit Benzin. Gerechnet wird mit beiden Anteilen:</p>
+<div class="formula">Kosten je 100 km = (1 − b) × Verbrauch Autogas × Autogaspreis
+                 + b × Verbrauch Autogas / 1,2 × Benzinpreis
+
+b = Anteil der Strecke mit Benzin (Standard 5 %)</div>
+<p>Autogas hat rund 25 % weniger Energie je Liter als Benzin; laut ADAC steigt der Verbrauch dadurch um 10 bis 30 %. Der Rechner setzt 20 % an — deshalb braucht der Benzinanteil ein Fünftel weniger Liter. Autogas ist trotzdem deutlich günstiger, weil die Energiesteuer nur 22,09 ct je Liter beträgt statt 65,45 ct beim Benzin; die frühere zusätzliche Ermäßigung ist Ende 2022 ausgelaufen. Für die Gasanlage kommen Wartung und Prüfung hinzu — laut ADAC alle 20.000 bis 25.000 km für 100 bis 150 €, die Gasanlagenprüfung bei jeder HU. Der Standardwert für Service/Inspektion liegt deshalb 100 € höher. Eine Umrüstung kostet laut ADAC 1.800 bis 3.500 € plus 110 € Abnahme und gehört in <em>Einmalig zusätzlich</em>. Erdgas (CNG) ist bewusst nicht enthalten: Neuwagen gibt es keine mehr, das Tankstellennetz schrumpft, und die Steuerermäßigung läuft 2026 aus.</p>
+<p><strong>Plug-in-Hybrid:</strong> Entscheidend ist, welcher Anteil der Kilometer wirklich elektrisch gefahren wird. Dieser Anteil fährt mit Strom — gemischt aus denselben Ladequellen wie beim E-Auto —, der Rest mit Benzin im Hybridbetrieb:</p>
+<div class="formula">Strom  = km × Anteil elektrisch / 100 × kWh/100 km / (1 − Ladeverlust) × Mischpreis
+Benzin = km × (1 − Anteil elektrisch) / 100 × l/100 km × Benzinpreis</div>
+<p>Laut Fraunhofer ISI und ICCT fahren privat genutzte Plug-in-Hybride real rund 45 bis 49 % ihrer Kilometer elektrisch, Dienstwagen nur 11 bis 15 %. Die offizielle Norm unterstellt 70 bis 85 %, der reale Verbrauch liegt beim Drei- bis Fünffachen des Prospektwerts. Voreingestellt sind deshalb 45 %; ab 70 % weist der Rechner darauf hin, dass der Wert ungewöhnlich hoch ist. Eine THG-Prämie gibt es für Plug-in-Hybride nicht, eine Kaufprämie nur mit höchstens 60 g CO₂/km oder mindestens 80 km elektrischer Reichweite (Erstzulassung 1.1.2026 bis 30.6.2027). Die Verschleißkurve wirkt bei Hybrid und Plug-in-Hybrid voll, weil der komplette Verbrennungsmotor an Bord ist.</p>
 <p>Elektro mit PV-Anlage: Den Schalter <em>PV-Anlage vorhanden</em> legst du in den Rahmendaten um, dann erscheinen Einspeisevergütung und Restlaufzeit, und je Fahrzeug der PV-Anteil. Ist er aus, zählt ein eingetragener PV-Anteil als Netzstrom daheim.</p>
 <p>Elektro: Der Verbrauch ab Batterie wird um die Ladeverluste erhöht, dann mit einem Mischpreis aus vier Ladequellen bewertet:</p>
 <div class="formula">Ladepreis = (a_PV × Einspeisevergütung
@@ -3598,6 +3696,8 @@ Rate = (F − B) / L                                  bei 0 %</div>
 <li><strong>Schnellladen 0,59 €/kWh, AC 0,49 €/kWh</strong> — unter 50 ct gibt es unterwegs laut ADAC selten Strom; ad hoc ohne Vertrag bis zu 62 % teurer.</li>
 <li><strong>Kfz-Steuer Elektro 0 €</strong> — reine E-Autos mit Erstzulassung bis 31.12.2030 sind bis Ende 2035 befreit, maximal zehn Jahre ab Erstzulassung. Danach ermäßigt sich die Steuer um 50 %.</li>
 <li><strong>THG-Prämie 150 €/Jahr</strong> — die Treibhausgasminderungsquote. Jedes reine E-Auto erzeugt ein Zertifikat, das einmal jährlich über einen Vermarkter verkauft wird, Frist ist der 15. November; Plug-in-Hybride sind ausgeschlossen. Der Preis folgt dem Quotenmarkt und ist seit der Einführung stark gefallen: 2022 noch 250 bis 400 €, 2023 etwa 200 bis 300 €, 2024 rund 100 €, 2025 zwischen 70 und 100 €. Für 2026 nennen Anbieter 100 bis 180 €; die EU-Richtlinie RED III könnte den Satz wieder anheben, der maßgebliche Umrechnungsfaktor je Fahrzeug stand bei Erstellung dieses Tools aber noch aus. Im Modell mindert die Prämie den Energieblock, weil sie wirtschaftlich ein Rabatt auf den gefahrenen Kilometer ist: bei 2.800 kWh im Jahr entspricht sie rund 5,4 ct/kWh.</li>
+<li><strong>Autogas 1,10 €/l</strong> — Durchschnitt Mitte September 2026 (AutoScout24 und myLPG.eu, zitiert von motor.com.de). Mehrverbrauch gegenüber Benzin 20 %, laut ADAC 10 bis 30 %.</li>
+<li><strong>Plug-in-Hybrid 45 % elektrisch</strong> — Fraunhofer ISI/ICCT, reale Nutzung privater Plug-in-Hybride in Europa 45 bis 49 %. Startwerte 6,5 l/100 km im Benzinbetrieb und 20 kWh/100 km elektrisch.</li>
 <li><strong>Ladeverluste 12 %</strong> — typisch für Wechselstromladen an der Wallbox; am Schnelllader geringer, an der Schuko-Steckdose höher.</li>
 <li><strong>Restwert 38 %</strong> — voreingestellt für jedes neu angelegte Fahrzeug, nach fünf Jahren. Belastbar ist die Datenlage nicht: Die einzige dokumentierte Institutsprognose stammt von Bähr &amp; Fess (August 2025, mit Focus Online) und nennt für ein Tesla Model Y Standardreichweite 55,2 % nach <em>vier</em> Jahren zum Händlerverkaufspreis. Für fünf Jahre kursieren 41 bis 50 %. Portalauswertungen sehen das Model 3 nach 36 Monaten bei 40 bis 46 % Verlust und damit 5 bis 10 Prozentpunkte schlechter als einen vergleichbaren Verbrenner. Ob sich der Verfall stabilisiert hat, ist unter den Quellen umstritten — für den Gesamtmarkt ja, für das Model 3 mit zuletzt −14 % im Jahresvergleich eher nicht. Prüfe den Wert für dein Modell selbst; er ist der größte Hebel der ganzen Rechnung.</li>
 <li><strong>Inspektionskosten</strong> — ADAC-Erhebung Januar 2026: 94 Kostenvoranschläge bei BMW, Dacia, Hyundai, Mercedes und VW in Hamburg, Köln und München. E-Autos rund ein Drittel günstiger als der vergleichbare Verbrenner; BMW i4 527 € gegen M440i 1.054 € in Hamburg. Ausnahme Dacia: dort war der Verbrenner 43 % günstiger. Zu den Intervallen der einzelnen Hersteller gibt es keine belastbare öffentliche Übersicht — VW nennt für die ID-Reihe zwei Jahre, BMW beschreibt die Wartung als bedarfsorientiert, für Mercedes und Hyundai fand ich gar keine Angabe. Im Zweifel steht das Intervall im Serviceheft.</li>
@@ -3718,6 +3818,7 @@ function buildPdf(){
     ["Kalkulationszins (netto)", nf2.format(netRate(GE))+" % p.a."],
     ["Benzin (Super E10)", nf3.format(GE.pBenzin)+" €/l"],
     ["Diesel", nf3.format(GE.pDiesel)+" €/l"],
+    ...(vehicles.some(x => x.art === "lpg") ? [["Autogas (LPG)", nf3.format(GE.pLPG)+" €/l"]] : []),
     ["Haushaltsstrom", nf3.format(GE.pHaus)+" €/kWh"],
     ["PV-Anlage vorhanden", GE.pv ? "ja" : "nein (PV-Anteil zählt als Netzstrom daheim)"],
     ["Einspeisevergütung", GE.pv ? nf3.format(GE.pEinsp)+" €/kWh, noch "+nf0.format(GE.einspRest)+" Jahre" : "—"],
@@ -3740,7 +3841,7 @@ function buildPdf(){
     doc.addPage(); y = M;
     h1((k+1)+". " + (v.name||("Fahrzeug "+(row.i+1))));
     doc.setFont("helvetica","normal").setFontSize(9).setTextColor(...mut);
-    doc.text({benzin:"Benziner",diesel:"Diesel",elektro:"Elektro"}[v.art] + "  ·  " +
+    doc.text(({benzin:"Benziner",diesel:"Diesel",lpg:"Autogas (LPG)",hybrid:"Hybrid",phev:"Plug-in-Hybrid",elektro:"Elektro"}[v.art] || v.art) + "  ·  " +
              (v.besitzt ? "im Besitz" : v.fin==="kredit" ? (v.rkRueckgabe ? "Finanzierung mit Rückgabe" : v.rateModus==="angebot" ? "Finanzierung, Rate aus Angebot" : "Finanzierung, Rate berechnet") : {bar:"Barkauf",leasing:"Leasing"}[v.fin]) + "  ·  Gesamt " + E(res.total) + " €", M, y);
     y += 8;
 
@@ -3753,7 +3854,10 @@ function buildPdf(){
             : nf0.format(v.restwertPct)+" % = "+E(restwert(v)))],
       ["Einmalig zusätzlich", E(v.einmalig)],
       ["Förderung / Zuschuss", v.foerderung>0 ? "- "+E(v.foerderung)+" (Zufluss nach 6 Monaten)" : "—"],
-      ["Verbrauch", nf1.format(v.verbrauch)+(v.art==="elektro"?" kWh":" l")+"/100 km"],
+      ["Verbrauch", v.art==="elektro" ? nf1.format(v.verbrauch)+" kWh/100 km"
+        : v.art==="phev" ? nf1.format(v.verbrauch)+" l/100 km mit Benzin, "+nf1.format(v.verbrauchE)+" kWh/100 km elektrisch, "+nf0.format(v.eAnteil)+" % der km elektrisch"
+        : v.art==="lpg" ? nf1.format(v.verbrauch)+" l Autogas/100 km, "+nf0.format(v.lpgBenzin)+" % der km mit Benzin"
+        : nf1.format(v.verbrauch)+" l/100 km"],
       ["Versicherung", E(v.versicherung)+" /Jahr"],
       ["Kfz-Steuer", E(v.steuer)+" /Jahr"],
       ["Service/Inspektion", E(v.service)+" /Jahr"],
@@ -3761,13 +3865,15 @@ function buildPdf(){
       ["Reifen", E(v.reifenPreis)+" je Satz, alle "+(v.reifenModus==="jahre" ? fmtDe(v.reifenJahre,1)+" Jahre" : nf0.format(v.reifenKm)+" km")],
       ["HU/AU", E(v.hu)+", 3 Jahre nach Erstzulassung, dann alle 2 Jahre"],
       ["Erstzulassung / km-Stand", String(Math.round(v.baujahr))+" / "+nf0.format(v.kmStand)+" km"],
-      ["Wirkung der Verschleisskurve", nf0.format(kurveWirkung(v)*100)+" % (voreingestellt "+nf0.format(stdWertArt(v.art,"kurveWirkung"))+" % "+(v.art==="elektro" ? "beim E-Auto" : "beim Verbrenner")+")"]
+      ["Wirkung der Verschleisskurve", nf0.format(kurveWirkung(v)*100)+" % (voreingestellt "+nf0.format(stdWertArt(v.art,"kurveWirkung"))+" % "+({elektro:"beim E-Auto", hybrid:"beim Hybrid", phev:"beim Plug-in-Hybrid", lpg:"beim Autogas-Auto"}[v.art] || "beim Verbrenner")+")"]
     ];
-    if(v.art==="elektro"){
+    if(laedtStrom(v)){
       ein.push(["Ladeverluste", nf0.format(v.ladeverlust)+" %"+(v.abBatterie?" (Verbrauch ab Batterie)":" (nicht angewendet)")]);
       const laE = ladeAnteile(v, GE);
       ein.push(["Ladeanteile PV/Netz/AC/DC", nf0.format(laE.pv)+" / "+nf0.format(laE.heim)+" / "+nf0.format(laE.ac)+" / "+nf0.format(laE.dc)+" %"]);
-      ein.push(["Ladekarte / THG-Prämie", E(v.ladekarte)+" /Monat  ·  "+E(v.thg)+" /Jahr"]);
+      ein.push(v.art==="elektro"
+        ? ["Ladekarte / THG-Prämie", E(v.ladekarte)+" /Monat  ·  "+E(v.thg)+" /Jahr"]
+        : ["Ladekarte", E(v.ladekarte)+" /Monat (keine THG-Prämie für Plug-in-Hybride)"]);
     }
     if(v.fin==="kredit"){
       const kk = finKonditionen(v);
@@ -3791,27 +3897,38 @@ function buildPdf(){
     /* Herleitungen */
     h2("Rechenweg");
     h3("Energie im ersten Jahr");
-    if(v.art==="elektro"){
-      const netto = GE.km/100*v.verbrauch;
+    if(laedtStrom(v)){
+      const ph = v.art==="phev";
+      const kmE = ph ? GE.km*eAnteil(v) : GE.km;
       const loss = v.abBatterie ? v.ladeverlust/100 : 0;
       const s = (v.aPV+v.aHeim+v.aAC+v.aDC) || 100;
       const la = ladeAnteile(v, GE);
+      if(ph) para("Elektrisch gefahren: " + nf0.format(v.eAnteil) + " % von " + nf0.format(GE.km) + " km = " + nf0.format(kmE) + " km, der Rest mit Benzin.");
       formel(
-        "kWh ab Steckdose = " + nf0.format(GE.km) + " / 100 x " + nf1.format(v.verbrauch) +
+        "kWh ab Steckdose = " + nf0.format(kmE) + " / 100 x " + nf1.format(ph ? v.verbrauchE : v.verbrauch) +
         (loss ? " / (1 - " + nf2.format(loss) + ")" : "") + " = " + nf0.format(res.kwhBrutto) + " kWh\n" +
         "Mischpreis    = (" + nf0.format(la.pv) + " x " + nf3.format(GE.pEinsp) + " + " + nf0.format(la.heim) + " x " + nf3.format(GE.pHaus) +
         " + " + nf0.format(la.ac) + " x " + nf2.format(GE.pAC) + " + " + nf0.format(la.dc) + " x " + nf2.format(GE.pDC) + ") / " + nf0.format(s) + "\n" +
         "              = " + nf4(res.mix) + " EUR/kWh\n" +
-        "Energie J1    = " + nf0.format(res.kwhBrutto) + " x " + nf4(res.mix) + " = " + E(res.kwhBrutto*res.mix) + " EUR" +
-        (v.thg>0 ? "\nTHG-Praemie   = - " + E(v.thg) + " EUR, mindert diesen Block" : "")
+        "Strom J1      = " + nf0.format(res.kwhBrutto) + " x " + nf4(res.mix) + " = " + E(res.kwhBrutto*res.mix) + " EUR" +
+        (ph ? "\nBenzin J1     = " + nf0.format(GE.km - kmE) + " / 100 x " + nf1.format(v.verbrauch) + " x " + nf3.format(GE.pBenzin) + " = " + E(res.spritJ1) + " EUR" : "") +
+        (v.art==="elektro" && v.thg>0 ? "\nTHG-Praemie   = - " + E(v.thg) + " EUR, mindert diesen Block" : "")
       );
       if(GE.pv && la.pv > 0 && GE.einspRest < N) para("Ab Jahr " + (GE.einspRest+1) + " sinkt die Einspeisevergütung auf " + nf3.format(GE.pEinspNach) + " €/kWh, der Mischpreis damit auf " + nf4(res.mixSpaet) + " €/kWh.");
+    } else if(v.art==="lpg"){
+      const bA = v.lpgBenzin/100;
+      formel("Autogas J1 = " + nf0.format(GE.km) + " / 100 x " + nf2.format(1-bA) + " x " + nf1.format(v.verbrauch) + " l x " + nf3.format(GE.pLPG) + " EUR/l\n" +
+             "Benzin J1  = " + nf0.format(GE.km) + " / 100 x " + nf2.format(bA) + " x " + nf1.format(v.verbrauch) + " / " + nf1.format(LPG_MEHR) + " l x " + nf3.format(GE.pBenzin) + " EUR/l\n" +
+             "Energie J1 = " + E(res.spritJ1) + " EUR");
+      para("Der Benzinanteil (Kaltstart, leerer Gastank) braucht rund " + nf0.format((LPG_MEHR-1)*100) + " % weniger Liter als Autogas, weil Benzin mehr Energie je Liter hat.");
     } else {
       const pr = v.art==="diesel" ? GE.pDiesel : GE.pBenzin;
       formel("Energie J1 = " + nf0.format(GE.km) + " / 100 x " + nf1.format(v.verbrauch) + " x " + nf3.format(pr) +
              " = " + E(GE.km/100*v.verbrauch*pr) + " EUR");
     }
-    para("In den Folgejahren mit " + nf1.format(v.art==="elektro" ? GE.iStrom : GE.iFuel) + " % Teuerung fortgeschrieben.");
+    para(v.art==="phev"
+      ? "In den Folgejahren Strom mit " + nf1.format(GE.iStrom) + " %, Benzin mit " + nf1.format(GE.iFuel) + " % Teuerung fortgeschrieben."
+      : "In den Folgejahren mit " + nf1.format(v.art==="elektro" ? GE.iStrom : GE.iFuel) + " % Teuerung fortgeschrieben.");
 
     h3("Wartung und Verschleiß");
     const reifenJ = reifenProJahr(v, GE.km);
@@ -3949,6 +4066,10 @@ function buildPdf(){
     ["Schnellladen / AC","0,59 / 0,49 €/kWh","ADAC: unter 50 ct unterwegs selten"],
     ["Kfz-Steuer Elektro","0 €","Erstzulassung bis 31.12.2030 befreit bis Ende 2035, max. 10 Jahre"],
     ["THG-Prämie","150 €/Jahr","marktabhängig, für 2026 nennen Anbieter 100 bis 180 €"],
+    ["Autogas (LPG)","1,10 €/l","Durchschnitt Mitte September 2026 (AutoScout24, myLPG.eu)"],
+    ["Mehrverbrauch Autogas","+20 %","ADAC: 10 bis 30 % mehr Liter als mit Benzin"],
+    ["Plug-in-Hybrid elektrisch","45 % der km","Fraunhofer ISI/ICCT: privat real 45 bis 49 %, Dienstwagen 11 bis 15 %"],
+    ["Wartung Gasanlage","+100 €/Jahr","ADAC: alle 20.000 bis 25.000 km, 100 bis 150 €"],
     ["Inspektion E-Auto vs. Verbrenner","rund ein Drittel","ADAC-Erhebung 01/2026, 94 Kostenvoranschläge"],
     ["Verschleißkurve bis 9 J.","61 / 137 / 226 €","DAT-Report 2025, Verschleißreparaturen nach Altersklasse"],
     ["Verschleißkurve ab 9 J.","18,3 % bis 40,3 %","TÜV-Report 2026, erhebliche Mängel nach Altersklasse"],
@@ -4198,7 +4319,10 @@ function renderResultsOnly(){
   eingabeGeaendert();
   autosave();
 }
+let LPG_DA = false;          // ist ein Autogas-Fahrzeug angelegt? Dann gehört der Autogaspreis in die Rahmendaten
 function render(){
+  const lpg = vehicles.some(v => v.art === "lpg");
+  if(lpg !== LPG_DA){ LPG_DA = lpg; leereGlobals(); }
   renderGlobals();
   rateHint();
   renderVehicles();
@@ -4460,7 +4584,7 @@ window.__parseDe = parseDe;
 /* Selbsttest der Rechenkerne – Ergebnis nur in der Konsole */
 window.__selftest = function(){
   const g = {years:5, km:15000, anlage:1, pv:1, etfBrutto:0, kest:0,
-             pBenzin:2.00, pDiesel:2.00, pHaus:0.30, pEinsp:0.08, einspRest:99, pEinspNach:0.045,
+             pBenzin:2.00, pDiesel:2.00, pLPG:1.00, pHaus:0.30, pEinsp:0.08, einspRest:99, pEinspNach:0.045,
              pAC:0.50, pDC:0.60, iFuel:0, iStrom:0, iGen:0};
   const prev = MODE, prevD = DETAIL; MODE="nom"; DETAIL = true;
   const t = [];
@@ -4597,6 +4721,18 @@ window.__selftest = function(){
   const vE = mkVehicle({}); setzeArt(vE, "elektro"); vE.steuer = 120; setzeArt(vE, "benzin");
   t.push(["Eigene Steuer bleibt beim Wechsel", vE.steuer, 120]);
   t.push(["THG-Prämie Standard", VDEF.thg, 150]);
+  // 15) Neue Antriebe — Energie über 5 Jahre ohne Teuerung (MODE nom, DETAIL)
+  const nix = {kaufpreis:0, restwertPct:0, versicherung:0, steuer:0, service:0, reifenPreis:0, reifenKm:0, hu:0, reparatur:0, einmalig:0, ladekarte:0, fin:"bar"};
+  t.push(["Hybrid: 5 l × 2 € × 150 × 5", calc(mkVehicle(Object.assign({}, nix, {art:"hybrid", verbrauch:5})), g).blocks.energie, 7500]);
+  t.push(["Autogas: 90 % Gas, 10 % Benzin", calc(mkVehicle(Object.assign({}, nix, {art:"lpg", verbrauch:10, lpgBenzin:10})), g).blocks.energie,
+          5*150*(0.9*10*1.00 + 0.1*(10/1.2)*2.00)]);
+  const vP = mkVehicle(Object.assign({}, nix, {art:"phev", verbrauch:6, verbrauchE:20, eAnteil:50, ladeverlust:0, abBatterie:1,
+                                              aPV:0, aHeim:100, aAC:0, aDC:0, thg:500}));
+  t.push(["Plug-in: 50 % Strom, 50 % Benzin, ohne THG", calc(vP, g).blocks.energie, 5*(75*20*0.30 + 75*6*2.00)]);
+  const vQ = mkVehicle({}); setzeArt(vQ, "phev");
+  t.push(["Neuer Plug-in: 6,5 l, 40 € Steuer, Ladeanteile", [vQ.verbrauch, vQ.steuer, vQ.aHeim + vQ.aAC + vQ.aDC + vQ.aPV].join("/") === "6.5/40/100" ? 1 : 0, 1]);
+  const vL = mkVehicle({}); setzeArt(vL, "lpg");
+  t.push(["Neues Autogas-Auto: 9,5 l, Service 600 €", [vL.verbrauch, vL.service].join("/") === "9.5/600" ? 1 : 0, 1]);
   MODE = prev; DETAIL = prevD;
   console.table(t.map(([n,got,exp])=>({Test:n, Ist:Math.round(got*100)/100, Soll:Math.round(exp*100)/100,
     OK: Math.abs(got-exp) < Math.max(0.05, Math.abs(exp)*1e-6) ? "PASS":"FAIL"})));
