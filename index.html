@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="de">
 <head>
+  <!--
+    Autokosten-Rechner
+    © 2026 F&S FreizeitApplications UG (haftungsbeschränkt). Alle Rechte vorbehalten.
+    Quelltext, Texte und Gestaltung sind urheberrechtlich geschützt. Kopieren, Bearbeiten,
+    Weiterverbreiten oder Veröffentlichen – auch in Teilen – nur mit schriftlicher Genehmigung.
+    Anfragen: freizeitapplications@gmail.com
+    (Ausgenommen sind die eingebundenen Bibliotheken jsPDF und jsPDF-AutoTable, MIT-Lizenz.)
+  -->
   <!-- Google Analytics (G-LSTMSGEW2E) und Google AdSense werden erst nach Einwilligung geladen —
        siehe Skript „Einwilligung“ am Ende der Seite. -->
   <!-- Google AdSense, proofing our ownership: per Meta-Tag, lädt nichts und setzt keine Cookies -->
@@ -845,6 +853,7 @@ ins.adsbygoogle[data-ad-status="unfilled"]{display:none!important}
 .fuss .kontakt a{color:var(--accent);text-decoration:none;font-weight:500;overflow-wrap:anywhere}
 .fuss .rechtl{display:flex;gap:20px;flex-wrap:wrap;margin-left:auto}
 .fuss .rechtl a{font-size:13px;color:var(--ink-2);text-decoration:none}
+.fuss .copyright{flex-basis:100%;margin:0;font-size:12px;color:var(--ink-3)}
 .fuss a:hover,.fuss a:focus-visible{color:var(--accent);text-decoration:underline}
 
 /* ---------- Handy ---------- */
@@ -1197,6 +1206,7 @@ html.consent-offen body{overflow:hidden}
     <a href="impressum.html" data-en="Legal notice">Impressum</a>
     <a href="#" id="consent-oeffnen">Cookie-Einstellungen</a>
   </nav>
+  <p class="copyright" data-en="© 2026 F&amp;S FreizeitApplications UG (haftungsbeschränkt). All rights reserved.">© 2026 F&amp;S FreizeitApplications UG (haftungsbeschränkt). Alle Rechte vorbehalten.</p>
 </footer>
 </div>
 
@@ -1367,6 +1377,8 @@ html.consent-offen body{overflow:hidden}
 <script>
 (function(){
 "use strict";
+/* Autokosten-Rechner — © 2026 F&S FreizeitApplications UG (haftungsbeschränkt). Alle Rechte vorbehalten.
+   Nutzung, Vervielfältigung und Bearbeitung dieses Codes nur mit schriftlicher Genehmigung. */
 
 /* ============================================================
    Sprache (DE/EN). Gewählt über den Schalter oben rechts oder ?lang=en in der Adresse;
@@ -4509,7 +4521,7 @@ function buildPdf(){
     doc.setPage(p);
     doc.setDrawColor(...line).setLineWidth(0.2).line(M, PH-12, PW-M, PH-12);
     doc.setFont("helvetica","normal").setFontSize(7).setTextColor(...mut);
-    doc.text(TT("Autokosten-Rechner · Prüfbericht vom ","Car Cost Calculator · Detailed report of ") + datum, M, PH-8);
+    doc.text(TT("Autokosten-Rechner · Prüfbericht vom ","Car Cost Calculator · Detailed report of ") + datum + "  ·  © 2026 F&S FreizeitApplications UG", M, PH-8);
     doc.text(TT("Seite ","Page ") + p + TT(" von "," of ") + n, PW-M, PH-8, {align:"right"});
   }
   return doc;
