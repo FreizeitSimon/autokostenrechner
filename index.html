@@ -814,6 +814,10 @@ td .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;margin-ri
 .btn.gross{font-size:15px;font-weight:600;padding:12px 26px}
 /* Anzeige im Berechnen-Kasten: eigene Zeile in voller Breite, sonst bekommt AdSense keine Breite */
 .rechnen .adsense-wrapper{flex:1 1 100%;width:100%;min-width:0}
+/* Liefert Google keine Anzeige aus, setzt es data-ad-status="unfilled" — dann Block samt Abstand ausblenden
+   (Empfehlung von Google, support.google.com/adsense/answer/10762946) */
+ins.adsbygoogle[data-ad-status="unfilled"]{display:none!important}
+.adsense-wrapper:has(> ins.adsbygoogle[data-ad-status="unfilled"]){display:none}
 .rechnen .hint{margin:0;flex:1;min-width:200px}
 .rank-leer{font-size:13px;color:var(--ink-2);line-height:1.5}
 .rank-leer p{margin:0 0 12px}
